@@ -30,6 +30,7 @@ class DetailViewController: UIViewController {
         // Do any additional setup after loading the view.
         fetchData(TIME_SERIES_DAILY_URL)
         fetchData(SMA_URL)
+        
         fetchData(EMA_URL)
         fetchData(STOCH_URL)
         fetchData(RSI_URL)
