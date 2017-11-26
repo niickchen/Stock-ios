@@ -30,6 +30,13 @@ extension NSMutableAttributedString {
     }
 }
 
+//// This way you'll never hit Index out of range
+//extension Collection where Indices.Iterator.Element == Index {
+//    subscript (safe index: Index) ->  Element? {
+//        return indices.contains(index) ? self[index] : nil
+//    }
+//}
+
 class ViewController: UIViewController, UITextFieldDelegate, UITableViewDelegate, UITableViewDataSource {
     var autolist: [AnyObject] = []
     @IBOutlet weak var inputField: UITextField!
@@ -63,7 +70,8 @@ class ViewController: UIViewController, UITextFieldDelegate, UITableViewDelegate
         
         if segue.identifier == "detail" {
             if let toViewController = segue.destination as? DetailViewController {
-                toViewController.input = inputField.text?.replacingOccurrences(of: " ", with: "")
+                var fullinputArr = inputField.text?.uppercased().replacingOccurrences(of: " ", with: "").split(separator: "-")
+                toViewController.input = String(fullinputArr![0])
             }
         }
     }
@@ -128,10 +136,12 @@ class ViewController: UIViewController, UITextFieldDelegate, UITableViewDelegate
 //    }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if let item = autolist[indexPath.row] as? [String: String] {
-            inputField.text = item["Symbol"]
-            self.myTableView.isHidden = true
-            self.autolist = []
+        if indexPath.row < autolist.count {
+            if let item = autolist[indexPath.row] as? [String: String] {
+                inputField.text = "\(item["Symbol"]!) - \(item["Name"]!) (" + item["Exchange"]! + ")"
+                self.myTableView.isHidden = true
+                self.autolist = []
+            }
         }
     }
     
@@ -141,8 +151,8 @@ class ViewController: UIViewController, UITextFieldDelegate, UITableViewDelegate
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "MyCell", for: indexPath as IndexPath)
-        if autolist.count > 0 {
             // TODO: INDEX OUT OF RANGE EXCEPTION HERE
+        if indexPath.row < autolist.count {
             if let item = autolist[indexPath.row] as? [String: String] {
                 let formattedString = NSMutableAttributedString()
                 formattedString.bold(item["Symbol"]!).normal(" - \(item["Name"] ?? "")").normal(" (\(item["Exchange"] ?? ""))")

@@ -3,4 +3,5 @@ use_frameworks!
 
 target 'Stock' do
   pod 'Toaster'
+  pod 'SwiftSpinner'
 end
