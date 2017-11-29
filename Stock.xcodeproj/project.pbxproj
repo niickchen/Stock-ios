@@ -15,6 +15,12 @@
 		010DC0931FC79609006895BC /* StockTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 010DC0921FC79609006895BC /* StockTests.swift */; };
 		010DC09E1FC79609006895BC /* StockUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 010DC09D1FC79609006895BC /* StockUITests.swift */; };
 		01B2853D1FC93A5B0062396D /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01B2853C1FC93A5B0062396D /* DetailViewController.swift */; };
+		01BF50D41FC9D97C00DB5175 /* NewsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01BF50D31FC9D97C00DB5175 /* NewsViewController.swift */; };
+		01BF50D61FC9D99100DB5175 /* CurrentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01BF50D51FC9D99100DB5175 /* CurrentViewController.swift */; };
+		01BF50D81FC9D99F00DB5175 /* HistoricalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01BF50D71FC9D99F00DB5175 /* HistoricalViewController.swift */; };
+		01BF50DC1FCAA4B400DB5175 /* LoadingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01BF50DB1FCAA4B400DB5175 /* LoadingViewController.swift */; };
+		01BFFA3B1FCB8C2300F01434 /* historical.js in Resources */ = {isa = PBXBuildFile; fileRef = 01BFFA3A1FCB8C2300F01434 /* historical.js */; };
+		01C6012B1FCCFE2000AF8478 /* current.js in Resources */ = {isa = PBXBuildFile; fileRef = 01C6012A1FCCFE2000AF8478 /* current.js */; };
 		3A823C897F0675E27E3F8B70 /* Pods_Stock.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D2D76F286AB8EB7115C547A /* Pods_Stock.framework */; };
 /* End PBXBuildFile section */
 
@@ -51,6 +57,12 @@
 		010DC09D1FC79609006895BC /* StockUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StockUITests.swift; sourceTree = "<group>"; };
 		010DC09F1FC79609006895BC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		01B2853C1FC93A5B0062396D /* DetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
+		01BF50D31FC9D97C00DB5175 /* NewsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsViewController.swift; sourceTree = "<group>"; };
+		01BF50D51FC9D99100DB5175 /* CurrentViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentViewController.swift; sourceTree = "<group>"; };
+		01BF50D71FC9D99F00DB5175 /* HistoricalViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoricalViewController.swift; sourceTree = "<group>"; };
+		01BF50DB1FCAA4B400DB5175 /* LoadingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingViewController.swift; sourceTree = "<group>"; };
+		01BFFA3A1FCB8C2300F01434 /* historical.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = historical.js; sourceTree = "<group>"; };
+		01C6012A1FCCFE2000AF8478 /* current.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = current.js; sourceTree = "<group>"; };
 		1D2D76F286AB8EB7115C547A /* Pods_Stock.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Stock.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B68C150BEBED13B65A99B229 /* Pods-Stock.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Stock.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Stock/Pods-Stock.debug.xcconfig"; sourceTree = "<group>"; };
 		F0AE76D99897A86260694E03 /* Pods-Stock.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Stock.release.xcconfig"; path = "Pods/Target Support Files/Pods-Stock/Pods-Stock.release.xcconfig"; sourceTree = "<group>"; };
@@ -115,6 +127,12 @@
 				010DC0861FC79609006895BC /* LaunchScreen.storyboard */,
 				010DC0891FC79609006895BC /* Info.plist */,
 				01B2853C1FC93A5B0062396D /* DetailViewController.swift */,
+				01BF50D31FC9D97C00DB5175 /* NewsViewController.swift */,
+				01BF50D51FC9D99100DB5175 /* CurrentViewController.swift */,
+				01BF50D71FC9D99F00DB5175 /* HistoricalViewController.swift */,
+				01BF50DB1FCAA4B400DB5175 /* LoadingViewController.swift */,
+				01BFFA3A1FCB8C2300F01434 /* historical.js */,
+				01C6012A1FCCFE2000AF8478 /* current.js */,
 			);
 			path = Stock;
 			sourceTree = "<group>";
@@ -270,6 +288,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				010DC0881FC79609006895BC /* LaunchScreen.storyboard in Resources */,
+				01C6012B1FCCFE2000AF8478 /* current.js in Resources */,
+				01BFFA3B1FCB8C2300F01434 /* historical.js in Resources */,
 				010DC0851FC79609006895BC /* Assets.xcassets in Resources */,
 				010DC0831FC79609006895BC /* Main.storyboard in Resources */,
 			);
@@ -317,10 +337,22 @@
 			);
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-Stock/Pods-Stock-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/Bolts/Bolts.framework",
+				"${BUILT_PRODUCTS_DIR}/FBSDKCoreKit/FBSDKCoreKit.framework",
+				"${BUILT_PRODUCTS_DIR}/FBSDKShareKit/FBSDKShareKit.framework",
+				"${BUILT_PRODUCTS_DIR}/FacebookCore/FacebookCore.framework",
+				"${BUILT_PRODUCTS_DIR}/FacebookShare/FacebookShare.framework",
+				"${BUILT_PRODUCTS_DIR}/SwiftSpinner/SwiftSpinner.framework",
 				"${BUILT_PRODUCTS_DIR}/Toaster/Toaster.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Bolts.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FBSDKCoreKit.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FBSDKShareKit.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FacebookCore.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FacebookShare.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftSpinner.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Toaster.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -350,9 +382,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				01BF50DC1FCAA4B400DB5175 /* LoadingViewController.swift in Sources */,
+				01BF50D61FC9D99100DB5175 /* CurrentViewController.swift in Sources */,
 				01B2853D1FC93A5B0062396D /* DetailViewController.swift in Sources */,
+				01BF50D81FC9D99F00DB5175 /* HistoricalViewController.swift in Sources */,
 				010DC0801FC79609006895BC /* ViewController.swift in Sources */,
 				010DC07E1FC79609006895BC /* AppDelegate.swift in Sources */,
+				01BF50D41FC9D97C00DB5175 /* NewsViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -521,6 +557,10 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = MBAW46AYR3;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				INFOPLIST_FILE = Stock/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.niick.Stock;
@@ -537,6 +577,10 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = MBAW46AYR3;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				INFOPLIST_FILE = Stock/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.niick.Stock;
