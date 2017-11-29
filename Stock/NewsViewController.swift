@@ -11,6 +11,7 @@ import UIKit
 class NewsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
     var newsjson: [String: AnyObject] = [:]
+<<<<<<< HEAD
     var newsdata: [AnyObject] = []
     
     var timer = Timer()
@@ -34,6 +35,21 @@ class NewsViewController: UIViewController, UITableViewDelegate, UITableViewData
             self.myTableView.reloadData()
             self.myTableView.isHidden = false
         }
+=======
+    var timer = Timer()
+    @IBOutlet weak var myTableView: UITableView!
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        // table view setup
+        myTableView.register(UITableViewCell.self, forCellReuseIdentifier: "MyCell")
+        myTableView.dataSource = self
+        myTableView.delegate = self
+        myTableView.reloadData()
+        
+        //delayedUpdateTable()
+>>>>>>> origin/master
     }
 
     override func didReceiveMemoryWarning() {
@@ -49,6 +65,7 @@ class NewsViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+<<<<<<< HEAD
         let arr = newsdata[indexPath.row] as AnyObject
         let urlString = arr["link"] as! String
         guard let url = URL(string: urlString) else {
@@ -60,10 +77,13 @@ class NewsViewController: UIViewController, UITableViewDelegate, UITableViewData
         } else {
             UIApplication.shared.openURL(url)
         }
+=======
+>>>>>>> origin/master
         tableView.deselectRow(at: indexPath, animated: true)
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+<<<<<<< HEAD
         // process newsjson
         newsjson = newsjson["rss"] as? [String : AnyObject] ?? newsjson
         newsjson = newsjson["channel"] as? [String : AnyObject] ?? newsjson
@@ -73,6 +93,11 @@ class NewsViewController: UIViewController, UITableViewDelegate, UITableViewData
             
         }
         return newsdata.count
+=======
+        newsjson = newsjson["rss"] as? [String : AnyObject] ?? newsjson
+        newsjson = newsjson["channel"] as? [String : AnyObject] ?? newsjson
+        return newsjson["item"]?.count ?? 0
+>>>>>>> origin/master
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -81,6 +106,7 @@ class NewsViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "MyCell", for: indexPath as IndexPath)
+<<<<<<< HEAD
         let arr = newsdata[indexPath.row] as AnyObject
         
         // convert time to current timezone
@@ -96,6 +122,10 @@ class NewsViewController: UIViewController, UITableViewDelegate, UITableViewData
         let formattedString = NSMutableAttributedString()
         formattedString.bold("\(arr["title"]! ?? "")").compact("\n\n").light("  Author: \(arr["sa:author_name"]! ?? "")").compact("\n\n").light("  Date: \(strDate ?? "")")
         cell.textLabel!.attributedText = formattedString
+=======
+        let arr = newsjson["item"]![indexPath.row] as AnyObject
+        cell.textLabel?.text = arr["title"] as? String ?? ""
+>>>>>>> origin/master
         cell.textLabel!.numberOfLines = 0
         cell.textLabel!.lineBreakMode = NSLineBreakMode.byWordWrapping
         return cell

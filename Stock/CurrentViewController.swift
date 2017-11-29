@@ -7,6 +7,7 @@
 //
 
 import UIKit
+<<<<<<< HEAD
 import WebKit
 import Toaster
 import FacebookShare
@@ -533,6 +534,15 @@ class CurrentViewController: UIViewController, WKUIDelegate, WKNavigationDelegat
         }
         
         task.resume()
+=======
+
+class CurrentViewController: UIViewController {
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        // Do any additional setup after loading the view.
+>>>>>>> origin/master
     }
 
     override func didReceiveMemoryWarning() {
@@ -540,6 +550,7 @@ class CurrentViewController: UIViewController, WKUIDelegate, WKNavigationDelegat
         // Dispose of any resources that can be recreated.
     }
     
+<<<<<<< HEAD
     func setupTableView() {
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "MyCell")
         tableView.dataSource = self
@@ -748,6 +759,9 @@ class CurrentViewController: UIViewController, WKUIDelegate, WKNavigationDelegat
         }
     }
     
+=======
+
+>>>>>>> origin/master
     /*
     // MARK: - Navigation
 

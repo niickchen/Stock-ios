@@ -19,8 +19,11 @@
 		01BF50D61FC9D99100DB5175 /* CurrentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01BF50D51FC9D99100DB5175 /* CurrentViewController.swift */; };
 		01BF50D81FC9D99F00DB5175 /* HistoricalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01BF50D71FC9D99F00DB5175 /* HistoricalViewController.swift */; };
 		01BF50DC1FCAA4B400DB5175 /* LoadingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01BF50DB1FCAA4B400DB5175 /* LoadingViewController.swift */; };
+<<<<<<< HEAD
 		01BFFA3B1FCB8C2300F01434 /* historical.js in Resources */ = {isa = PBXBuildFile; fileRef = 01BFFA3A1FCB8C2300F01434 /* historical.js */; };
 		01C6012B1FCCFE2000AF8478 /* current.js in Resources */ = {isa = PBXBuildFile; fileRef = 01C6012A1FCCFE2000AF8478 /* current.js */; };
+=======
+>>>>>>> origin/master
 		3A823C897F0675E27E3F8B70 /* Pods_Stock.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D2D76F286AB8EB7115C547A /* Pods_Stock.framework */; };
 /* End PBXBuildFile section */
 
@@ -61,8 +64,11 @@
 		01BF50D51FC9D99100DB5175 /* CurrentViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentViewController.swift; sourceTree = "<group>"; };
 		01BF50D71FC9D99F00DB5175 /* HistoricalViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoricalViewController.swift; sourceTree = "<group>"; };
 		01BF50DB1FCAA4B400DB5175 /* LoadingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingViewController.swift; sourceTree = "<group>"; };
+<<<<<<< HEAD
 		01BFFA3A1FCB8C2300F01434 /* historical.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = historical.js; sourceTree = "<group>"; };
 		01C6012A1FCCFE2000AF8478 /* current.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = current.js; sourceTree = "<group>"; };
+=======
+>>>>>>> origin/master
 		1D2D76F286AB8EB7115C547A /* Pods_Stock.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Stock.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B68C150BEBED13B65A99B229 /* Pods-Stock.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Stock.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Stock/Pods-Stock.debug.xcconfig"; sourceTree = "<group>"; };
 		F0AE76D99897A86260694E03 /* Pods-Stock.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Stock.release.xcconfig"; path = "Pods/Target Support Files/Pods-Stock/Pods-Stock.release.xcconfig"; sourceTree = "<group>"; };
@@ -131,8 +137,11 @@
 				01BF50D51FC9D99100DB5175 /* CurrentViewController.swift */,
 				01BF50D71FC9D99F00DB5175 /* HistoricalViewController.swift */,
 				01BF50DB1FCAA4B400DB5175 /* LoadingViewController.swift */,
+<<<<<<< HEAD
 				01BFFA3A1FCB8C2300F01434 /* historical.js */,
 				01C6012A1FCCFE2000AF8478 /* current.js */,
+=======
+>>>>>>> origin/master
 			);
 			path = Stock;
 			sourceTree = "<group>";
@@ -337,21 +346,27 @@
 			);
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-Stock/Pods-Stock-frameworks.sh",
+<<<<<<< HEAD
 				"${BUILT_PRODUCTS_DIR}/Bolts/Bolts.framework",
 				"${BUILT_PRODUCTS_DIR}/FBSDKCoreKit/FBSDKCoreKit.framework",
 				"${BUILT_PRODUCTS_DIR}/FBSDKShareKit/FBSDKShareKit.framework",
 				"${BUILT_PRODUCTS_DIR}/FacebookCore/FacebookCore.framework",
 				"${BUILT_PRODUCTS_DIR}/FacebookShare/FacebookShare.framework",
+=======
+>>>>>>> origin/master
 				"${BUILT_PRODUCTS_DIR}/SwiftSpinner/SwiftSpinner.framework",
 				"${BUILT_PRODUCTS_DIR}/Toaster/Toaster.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
+<<<<<<< HEAD
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Bolts.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FBSDKCoreKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FBSDKShareKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FacebookCore.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FacebookShare.framework",
+=======
+>>>>>>> origin/master
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftSpinner.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Toaster.framework",
 			);

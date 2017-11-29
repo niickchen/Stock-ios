@@ -9,7 +9,10 @@
 import UIKit
 import SwiftSpinner
 import Toaster
+<<<<<<< HEAD
 import Foundation
+=======
+>>>>>>> origin/master
 
 let SMA_URL = "/quote/sma?symbol=";
 let EMA_URL = "/quote/ema?symbol=";
@@ -29,8 +32,11 @@ class DetailViewController: UIViewController {
     var containerIndex: Int = 0
     var stockdata: [String: [String: AnyObject]] = [:]
     var error: [String: Bool] = [:]
+<<<<<<< HEAD
     var loaded = false
     var timer: Timer = Timer.init()
+=======
+>>>>>>> origin/master
     
     @IBOutlet weak var containerView: UIView!
     
@@ -44,10 +50,13 @@ class DetailViewController: UIViewController {
         // Add View Controller as Child View Controller
         self.add(asChildViewController: viewController)
         
+<<<<<<< HEAD
         // Pass data
         viewController.input = self.input ?? ""
         viewController.tsdData = stockdata[TIME_SERIES_DAILY_URL] ?? [:]
         viewController.tsdError = self.error[TIME_SERIES_DAILY_URL] ?? false
+=======
+>>>>>>> origin/master
         return viewController
     }()
     
@@ -61,9 +70,12 @@ class DetailViewController: UIViewController {
         // Add View Controller as Child View Controller
         self.add(asChildViewController: viewController)
         
+<<<<<<< HEAD
         // Pass data
         viewController.historicalData = stockdata[TIME_SERIES_DAILY_URL] ?? [:]
         
+=======
+>>>>>>> origin/master
         return viewController
     }()
     
@@ -76,8 +88,11 @@ class DetailViewController: UIViewController {
         
         // Add View Controller as Child View Controller
         self.add(asChildViewController: viewController)
+<<<<<<< HEAD
         
         // Pass data
+=======
+>>>>>>> origin/master
         viewController.newsjson = stockdata[NEWS_URL] ?? [:]
         return viewController
     }()
@@ -99,6 +114,7 @@ class DetailViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
+<<<<<<< HEAD
         containerIndex = 0
         stockdata = [:]
         error = [:]
@@ -125,6 +141,28 @@ class DetailViewController: UIViewController {
         
         // timer to check if received data
         timer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(self.loadCurrentViewAndDismissSpinner), userInfo: nil, repeats: true)
+=======
+        
+        // loading spinner
+        SwiftSpinner.show(duration: 12, title: "Loading data")
+        
+        // async fetch data
+        fetchData(TIME_SERIES_DAILY_URL)
+        fetchData(SMA_URL)
+        fetchData(EMA_URL)
+        fetchData(STOCH_URL)
+        fetchData(RSI_URL)
+        fetchData(ADX_URL)
+        fetchData(CCI_URL)
+        fetchData(BBANDS_URL)
+        fetchData(MACD_URL)
+        fetchData(NEWS_URL)
+        
+        // show current view
+        add(asChildViewController: currentViewController)
+        // hide error label
+        errorLabel.isHidden = true
+>>>>>>> origin/master
     }
     
     func displayToastMessage(_ userMessage: String) {
@@ -161,6 +199,32 @@ class DetailViewController: UIViewController {
         viewController.removeFromParentViewController()
     }
     
+<<<<<<< HEAD
+=======
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        // pass data to current view controller
+        if segue.identifier == "current" {
+            if let toViewController = segue.destination as? CurrentViewController {
+                
+            }
+        }
+        
+        // pass data to historical view controller
+        if segue.identifier == "historical" {
+            if let toViewController = segue.destination as? HistoricalViewController {
+                
+            }
+        }
+        
+        // pass data to news view controller
+        if segue.identifier == "news" {
+            if let toViewController = segue.destination as? NewsViewController {
+                toViewController.newsjson = stockdata[NEWS_URL]!
+            }
+        }
+    }
+    
+>>>>>>> origin/master
 
     @IBOutlet weak var segmentedControl: UISegmentedControl!
     
@@ -170,6 +234,7 @@ class DetailViewController: UIViewController {
         switch segmentedControl.selectedSegmentIndex
         { // update container view
             case 0:
+<<<<<<< HEAD
                 while stockdata[TIME_SERIES_DAILY_URL] == nil {
                     remove(asChildViewController: currentViewController)
                     remove(asChildViewController: newsViewController)
@@ -218,6 +283,20 @@ class DetailViewController: UIViewController {
                     add(asChildViewController: historicalViewController)
                     errorLabel.isHidden = true
             }
+=======
+                
+                remove(asChildViewController: historicalViewController)
+                remove(asChildViewController: newsViewController)
+                remove(asChildViewController: loadingViewController)
+                add(asChildViewController: currentViewController)
+                errorLabel.isHidden = true
+            case 1:
+                remove(asChildViewController: currentViewController)
+                remove(asChildViewController: newsViewController)
+                remove(asChildViewController: loadingViewController)
+                add(asChildViewController: historicalViewController)
+                errorLabel.isHidden = true
+>>>>>>> origin/master
             case 2:
                 while stockdata[NEWS_URL] == nil {
                     remove(asChildViewController: currentViewController)
@@ -228,11 +307,18 @@ class DetailViewController: UIViewController {
                     if self.error[NEWS_URL] != nil && self.error[NEWS_URL]! {
                         remove(asChildViewController: loadingViewController)
                         errorLabel.isHidden = false
+<<<<<<< HEAD
                         errorLabel.text = "Failed to load news data"
                         break
                     }
                 }
                 
+=======
+                        errorLabel.text = "Error loading news"
+                        break
+                    }
+                }
+>>>>>>> origin/master
                 // if received news correctly, show news view
                 if self.error[NEWS_URL] != nil && !self.error[NEWS_URL]! {
                     // TODO: Prompt error message after 10 seconds if not out of while loop
@@ -264,13 +350,19 @@ class DetailViewController: UIViewController {
                 print(url)
                 print(error!)
                 self.error[url] = true
+<<<<<<< HEAD
                 
+=======
+>>>>>>> origin/master
                 return
             }
             // make sure we got data
             guard let responseData = data else {
                 print("Error: did not receive data")
+<<<<<<< HEAD
                 print(url)
+=======
+>>>>>>> origin/master
                 self.error[url] = true
                 return
             }
@@ -278,6 +370,7 @@ class DetailViewController: UIViewController {
             do {
                 guard let json = try JSONSerialization.jsonObject(with: responseData, options: [])
                     as? [String: AnyObject] else {
+<<<<<<< HEAD
                         print("error trying to convert data to JSON dictionary")
                         print(url)
                         self.error[url] = true
@@ -303,6 +396,21 @@ class DetailViewController: UIViewController {
                 print(url)
                 self.error[url] = true
                 
+=======
+                        print("error trying to convert data to JSON")
+                        self.error[url] = true
+                        return
+                }
+                // dismiss the loading scene if received time_series_daily data
+                if url == TIME_SERIES_DAILY_URL {
+                    SwiftSpinner.hide()
+                }
+                self.stockdata[url] = json
+                self.error[url] = false
+            } catch  {
+                print("error trying to convert data to JSON")
+                self.error[url] = true
+>>>>>>> origin/master
                 return
             }
         }
@@ -310,6 +418,7 @@ class DetailViewController: UIViewController {
         task.resume()
     }
     
+<<<<<<< HEAD
     override func viewWillDisappear(_ animated: Bool) {
         input = ""
         containerIndex = 0
@@ -346,6 +455,8 @@ class DetailViewController: UIViewController {
         }
     }
     
+=======
+>>>>>>> origin/master
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()

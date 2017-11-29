@@ -1,4 +1,5 @@
 PODS:
+<<<<<<< HEAD
   - Bolts (1.8.4):
     - Bolts/AppLinks (= 1.8.4)
     - Bolts/Tasks (= 1.8.4)
@@ -17,16 +18,22 @@ PODS:
     - Bolts (~> 1.7)
   - FBSDKShareKit (4.28.0):
     - FBSDKCoreKit
+=======
+>>>>>>> origin/master
   - SwiftSpinner (1.5.0)
   - Toaster (2.1.1)
 
 DEPENDENCIES:
+<<<<<<< HEAD
   - FacebookCore
   - FacebookShare
+=======
+>>>>>>> origin/master
   - SwiftSpinner
   - Toaster
 
 SPEC CHECKSUMS:
+<<<<<<< HEAD
   Bolts: 8a7995239dbe724f9cba2248b766d48b7ebdd322
   FacebookCore: 3ffa190a3f1f96cec0e44d3fc221bc322c595ffa
   FacebookShare: 0469964297ebd75f052be2c5083389a4208e82b7
@@ -36,5 +43,11 @@ SPEC CHECKSUMS:
   Toaster: a6c9532de1ded8105e77376f7dffeb2e12b46dbb
 
 PODFILE CHECKSUM: 5cd882f410c1a1a0d948def8e29eb0acd7ec74ba
+=======
+  SwiftSpinner: 4c058c7a1d6b444dd2e1d70988ead40783097133
+  Toaster: a6c9532de1ded8105e77376f7dffeb2e12b46dbb
+
+PODFILE CHECKSUM: 895ba45faf193198c3aa118e31466ce143e92fea
+>>>>>>> origin/master
 
 COCOAPODS: 1.3.1
