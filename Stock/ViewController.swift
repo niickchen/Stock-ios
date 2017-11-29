@@ -14,7 +14,7 @@ let AUTO_URL = "/autocomplete?input="
 
 extension NSMutableAttributedString {
     @discardableResult func bold(_ text: String) -> NSMutableAttributedString {
-        let attrs: [NSAttributedStringKey: Any] = [.font: UIFont(name: "AvenirNext-Bold", size: 15)!]
+        let attrs: [NSAttributedStringKey: Any] = [.font: UIFont.systemFont(ofSize: 15, weight: UIFont.Weight.bold)]
         let boldString = NSMutableAttributedString(string:text, attributes: attrs)
         append(boldString)
         
@@ -22,13 +22,36 @@ extension NSMutableAttributedString {
     }
     
     @discardableResult func normal(_ text: String) -> NSMutableAttributedString {
-        let attrs: [NSAttributedStringKey: Any] = [.font: UIFont(name: "AvenirNext-Medium", size: 15)!]
+        let attrs: [NSAttributedStringKey: Any] = [.font: UIFont.systemFont(ofSize: 15, weight: UIFont.Weight.light)]
         let normal = NSMutableAttributedString(string:text, attributes: attrs)
         append(normal)
         
         return self
     }
+    
+    @discardableResult func light(_ text: String) -> NSMutableAttributedString {
+        let attrs: [NSAttributedStringKey: Any] = [.font: UIFont.systemFont(ofSize: 13, weight: UIFont.Weight.light), .foregroundColor: UIColor.lightGray]
+        let light = NSMutableAttributedString(string:text, attributes: attrs)
+        append(light)
+        
+        return self
+    }
+    
+    @discardableResult func compact(_ text: String) -> NSMutableAttributedString {
+        let attrs: [NSAttributedStringKey: Any] = [.font: UIFont.systemFont(ofSize: 5, weight: UIFont.Weight.light), .foregroundColor: UIColor.black]
+        let light = NSMutableAttributedString(string:text, attributes: attrs)
+        append(light)
+        
+        return self
+    }
 }
+
+//// This way you'll never hit Index out of range
+//extension Collection where Indices.Iterator.Element == Index {
+//    subscript (safe index: Index) ->  Element? {
+//        return indices.contains(index) ? self[index] : nil
+//    }
+//}
 
 class ViewController: UIViewController, UITextFieldDelegate, UITableViewDelegate, UITableViewDataSource {
     var autolist: [AnyObject] = []
@@ -63,7 +86,8 @@ class ViewController: UIViewController, UITextFieldDelegate, UITableViewDelegate
         
         if segue.identifier == "detail" {
             if let toViewController = segue.destination as? DetailViewController {
-                toViewController.input = inputField.text?.replacingOccurrences(of: " ", with: "")
+                var fullinputArr = inputField.text?.uppercased().replacingOccurrences(of: " ", with: "").split(separator: "-")
+                toViewController.input = String(fullinputArr![0])
             }
         }
     }
@@ -128,10 +152,12 @@ class ViewController: UIViewController, UITextFieldDelegate, UITableViewDelegate
 //    }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if let item = autolist[indexPath.row] as? [String: String] {
-            inputField.text = item["Symbol"]
-            self.myTableView.isHidden = true
-            self.autolist = []
+        if indexPath.row < autolist.count {
+            if let item = autolist[indexPath.row] as? [String: String] {
+                inputField.text = "\(item["Symbol"]!) - \(item["Name"]!) (" + item["Exchange"]! + ")"
+                self.myTableView.isHidden = true
+                self.autolist = []
+            }
         }
     }
     
@@ -141,8 +167,8 @@ class ViewController: UIViewController, UITextFieldDelegate, UITableViewDelegate
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "MyCell", for: indexPath as IndexPath)
-        if autolist.count > 0 {
             // TODO: INDEX OUT OF RANGE EXCEPTION HERE
+        if indexPath.row < autolist.count {
             if let item = autolist[indexPath.row] as? [String: String] {
                 let formattedString = NSMutableAttributedString()
                 formattedString.bold(item["Symbol"]!).normal(" - \(item["Name"] ?? "")").normal(" (\(item["Exchange"] ?? ""))")
@@ -250,6 +276,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UITableViewDelegate
                 guard let list = try JSONSerialization.jsonObject(with: responseData, options: [])
                     as? [AnyObject] else {
                         print("error trying to convert data to JSON")
+                        print("autocomplete")
                         self.autolist = []
                         reloadTable()
                         return
@@ -266,6 +293,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UITableViewDelegate
                 
             } catch  {
                 print("error trying to convert data to JSON")
+                print("autocomplete")
                 self.autolist = []
                 reloadTable()
                 return
