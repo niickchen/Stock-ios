@@ -19,11 +19,9 @@
 		01BF50D61FC9D99100DB5175 /* CurrentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01BF50D51FC9D99100DB5175 /* CurrentViewController.swift */; };
 		01BF50D81FC9D99F00DB5175 /* HistoricalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01BF50D71FC9D99F00DB5175 /* HistoricalViewController.swift */; };
 		01BF50DC1FCAA4B400DB5175 /* LoadingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01BF50DB1FCAA4B400DB5175 /* LoadingViewController.swift */; };
-<<<<<<< HEAD
 		01BFFA3B1FCB8C2300F01434 /* historical.js in Resources */ = {isa = PBXBuildFile; fileRef = 01BFFA3A1FCB8C2300F01434 /* historical.js */; };
 		01C6012B1FCCFE2000AF8478 /* current.js in Resources */ = {isa = PBXBuildFile; fileRef = 01C6012A1FCCFE2000AF8478 /* current.js */; };
-=======
->>>>>>> origin/master
+		01D6BFF41FCEC2E900BC0106 /* Stock.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 01D6BFF21FCEC2E900BC0106 /* Stock.xcdatamodeld */; };
 		3A823C897F0675E27E3F8B70 /* Pods_Stock.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D2D76F286AB8EB7115C547A /* Pods_Stock.framework */; };
 /* End PBXBuildFile section */
 
@@ -64,11 +62,9 @@
 		01BF50D51FC9D99100DB5175 /* CurrentViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentViewController.swift; sourceTree = "<group>"; };
 		01BF50D71FC9D99F00DB5175 /* HistoricalViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoricalViewController.swift; sourceTree = "<group>"; };
 		01BF50DB1FCAA4B400DB5175 /* LoadingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingViewController.swift; sourceTree = "<group>"; };
-<<<<<<< HEAD
 		01BFFA3A1FCB8C2300F01434 /* historical.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = historical.js; sourceTree = "<group>"; };
 		01C6012A1FCCFE2000AF8478 /* current.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = current.js; sourceTree = "<group>"; };
-=======
->>>>>>> origin/master
+		01D6BFF31FCEC2E900BC0106 /* Stock.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Stock.xcdatamodel; sourceTree = "<group>"; };
 		1D2D76F286AB8EB7115C547A /* Pods_Stock.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Stock.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B68C150BEBED13B65A99B229 /* Pods-Stock.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Stock.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Stock/Pods-Stock.debug.xcconfig"; sourceTree = "<group>"; };
 		F0AE76D99897A86260694E03 /* Pods-Stock.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Stock.release.xcconfig"; path = "Pods/Target Support Files/Pods-Stock/Pods-Stock.release.xcconfig"; sourceTree = "<group>"; };
@@ -129,6 +125,7 @@
 				010DC07D1FC79609006895BC /* AppDelegate.swift */,
 				010DC07F1FC79609006895BC /* ViewController.swift */,
 				010DC0811FC79609006895BC /* Main.storyboard */,
+				01D6BFF21FCEC2E900BC0106 /* Stock.xcdatamodeld */,
 				010DC0841FC79609006895BC /* Assets.xcassets */,
 				010DC0861FC79609006895BC /* LaunchScreen.storyboard */,
 				010DC0891FC79609006895BC /* Info.plist */,
@@ -137,11 +134,8 @@
 				01BF50D51FC9D99100DB5175 /* CurrentViewController.swift */,
 				01BF50D71FC9D99F00DB5175 /* HistoricalViewController.swift */,
 				01BF50DB1FCAA4B400DB5175 /* LoadingViewController.swift */,
-<<<<<<< HEAD
 				01BFFA3A1FCB8C2300F01434 /* historical.js */,
 				01C6012A1FCCFE2000AF8478 /* current.js */,
-=======
->>>>>>> origin/master
 			);
 			path = Stock;
 			sourceTree = "<group>";
@@ -346,27 +340,21 @@
 			);
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-Stock/Pods-Stock-frameworks.sh",
-<<<<<<< HEAD
 				"${BUILT_PRODUCTS_DIR}/Bolts/Bolts.framework",
 				"${BUILT_PRODUCTS_DIR}/FBSDKCoreKit/FBSDKCoreKit.framework",
 				"${BUILT_PRODUCTS_DIR}/FBSDKShareKit/FBSDKShareKit.framework",
 				"${BUILT_PRODUCTS_DIR}/FacebookCore/FacebookCore.framework",
 				"${BUILT_PRODUCTS_DIR}/FacebookShare/FacebookShare.framework",
-=======
->>>>>>> origin/master
 				"${BUILT_PRODUCTS_DIR}/SwiftSpinner/SwiftSpinner.framework",
 				"${BUILT_PRODUCTS_DIR}/Toaster/Toaster.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
-<<<<<<< HEAD
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Bolts.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FBSDKCoreKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FBSDKShareKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FacebookCore.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FacebookShare.framework",
-=======
->>>>>>> origin/master
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftSpinner.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Toaster.framework",
 			);
@@ -403,6 +391,7 @@
 				01BF50D81FC9D99F00DB5175 /* HistoricalViewController.swift in Sources */,
 				010DC0801FC79609006895BC /* ViewController.swift in Sources */,
 				010DC07E1FC79609006895BC /* AppDelegate.swift in Sources */,
+				01D6BFF41FCEC2E900BC0106 /* Stock.xcdatamodeld in Sources */,
 				01BF50D41FC9D97C00DB5175 /* NewsViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -707,6 +696,19 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		01D6BFF21FCEC2E900BC0106 /* Stock.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				01D6BFF31FCEC2E900BC0106 /* Stock.xcdatamodel */,
+			);
+			currentVersion = 01D6BFF31FCEC2E900BC0106 /* Stock.xcdatamodel */;
+			path = Stock.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 010DC0721FC79609006895BC /* Project object */;
 }

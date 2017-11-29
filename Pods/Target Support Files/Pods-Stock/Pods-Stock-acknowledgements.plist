@@ -14,7 +14,6 @@
 		</dict>
 		<dict>
 			<key>FooterText</key>
-<<<<<<< HEAD
 			<string>BSD License
 
 For Bolts software
@@ -166,8 +165,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 		</dict>
 		<dict>
 			<key>FooterText</key>
-=======
->>>>>>> origin/master
 			<string>Copyright (c) 2015 Marin Todorov &lt;touch-code-magazine@underplot.com&gt;
 
 Permission is hereby granted, free of charge, to any person obtaining a copy

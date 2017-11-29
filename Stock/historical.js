@@ -76,6 +76,10 @@ function reloadData(sBinaryParam) {
                                     text: 'All'
                                     }]
                           },
+                          
+                          chart: {
+                             backgroundColor: '#eef3f9',
+                          },
                           title: {
                           text: symbol + ' Stock Value'
                           },
@@ -102,7 +106,7 @@ function reloadData(sBinaryParam) {
 </script>
 </head>
 
-<body>
+<body style="background-color: RGB(238,243,249)">
 <div style="width: 100%; height:100%;" id="history-container"></div>
 </body>
 

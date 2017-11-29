@@ -7,10 +7,10 @@
 //
 
 import UIKit
-<<<<<<< HEAD
 import WebKit
 import Toaster
 import FacebookShare
+import CoreData
 
 extension String {
     subscript(_ range: CountableRange<Int>) -> String {
@@ -59,6 +59,11 @@ class CurrentViewController: UIViewController, WKUIDelegate, WKNavigationDelegat
     var plotOptions = ""
     var chartLink = ""
     
+    let starredImg = UIImage(named: "Starred")
+    let unstarredImg = UIImage(named: "Unstarred")
+    var starredStatus = false
+    var stocks: [StarredStock] = []
+    
     // This is bad. This is real bad.
     // TODO: Should have used customized cell to implement two columns.
     let rowHeader = ["Stock Symbol      ", "Last Price              ", "Change                  ", "Timestamp           ", "Open                       ", "Close                      ", "Day's Range         ", "Volume                   "]
@@ -73,53 +78,24 @@ class CurrentViewController: UIViewController, WKUIDelegate, WKNavigationDelegat
     @IBOutlet weak var picker: UIPickerView!
     
     @IBAction func change(_ sender: Any) {
-        switch selectedPickerValue {
-        case 0:
-            // symbol, data, dates
-            currentValidPickerValue = 0
+        if selectedPickerValue != currentValidPickerValue {
             loaded = false
-            
-        case 1:
-            currentValidPickerValue = 1
-            loaded = false
-            
-        case 2:
-            currentValidPickerValue = 2
-            loaded = false
-            
-        case 3:
-            currentValidPickerValue = 3
-            loaded = false
-            
-        case 4:
-            currentValidPickerValue = 4
-            loaded = false
-            
-        case 5:
-            currentValidPickerValue = 5
-            loaded = false
-            
-        case 6:
-            currentValidPickerValue = 6
-            loaded = false
-            
-        case 7:
-            currentValidPickerValue = 7
-            loaded = false
-            
-        case 8:
-            currentValidPickerValue = 8
-            loaded = false
-            
-        default:
-            break
+            currentValidPickerValue = selectedPickerValue
         }
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        self.view.backgroundColor = UIColor(red: 238/255, green: 243/255, blue: 249/255, alpha: 255/255)
+        
+        // fetch core data
+        getData()
 
         loaded = false
+        
+        // init fav button value
+        unFav()
         
         // Do any additional setup after loading the view.
         setupTableView()
@@ -159,15 +135,75 @@ class CurrentViewController: UIViewController, WKUIDelegate, WKNavigationDelegat
             self.fetchData(MACD_URL)
         }
         
-        
-        
         // timer to check if received data
         timer = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(self.dismissSpinnerAndShowCharts), userInfo: nil, repeats: true)
+        
+        
+    }
+    
+    // fetch core data
+    func getData() {
+        do {
+            let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+            stocks = try context.fetch(StarredStock.fetchRequest())
+        } catch {
+            print("Fetching Failed")
+        }
     }
     
     @IBOutlet weak var star: UIButton!
     @IBAction func starred(_ sender: Any) {
+        // if data error return
+        if tsdData.count == 0 || tsdError {
+            return
+        }
+        
+        let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+        
+        if !starredStatus {
+            let stock = StarredStock(context: context) // Link Task & Context
+            // save to core data
+            stock.symbol = rowContent[0]
+            stock.price = rowContent[1]
+            stock.change = rowContent[2]
+            stock.volume = rowContent[7]
+            // Save the data to coredata
+            (UIApplication.shared.delegate as! AppDelegate).saveContext()
+            
+            // update local data
+            getData()
+            
+            // Set fav star
+            setFav()
+            
+        } else {
+            for stock in stocks {
+                if stock.symbol == rowContent[0] {
+                    context.delete(stock)
+                    break
+                }
+            }
+            // update local data
+            getData()
+            
+            // Remove fav star
+            unFav()
+        }
+        
     }
+    
+    func setFav() {
+        starredStatus = true
+        star.setImage(starredImg, for: .normal)
+        star.setBackgroundImage(starredImg, for: .normal)
+    }
+    
+    func unFav() {
+        starredStatus = false
+        star.setImage(unstarredImg, for: .normal)
+        star.setBackgroundImage(unstarredImg, for: .normal)
+    }
+    
     @IBAction func shareToFacebook(_ sender: Any) {
         if currentValidPickerValue == 0 {
             if loaded && !self.tsdError {
@@ -188,8 +224,10 @@ class CurrentViewController: UIViewController, WKUIDelegate, WKNavigationDelegat
         let content = LinkShareContent(url: URL(string: link)!)
         let shareDialog = ShareDialog(content: content)
         shareDialog.failsOnInvalidData = true
+        shareDialog.mode = .automatic
         shareDialog.completion = { result in
             // Handle share results
+            self.displayToastMessage("Shared successfully.")
         }
 
         try? shareDialog.show()
@@ -213,15 +251,21 @@ class CurrentViewController: UIViewController, WKUIDelegate, WKNavigationDelegat
         let urlstring = SERVER_URL + FACEBOOK_SHARE_URL
         let url = URL(string: urlstring)
         if plotOptions.count > 0 {
-            httpPost(datastring: "['title':['text':'Solar Employment Growth by Sector, 2010-2016']", url: url!)
+            // String to Data, then to Dictionary
+            let json = try! JSONSerialization.jsonObject(with: plotOptions.data(using: .utf8)!, options: .allowFragments)
+            
+            // Then Dictionary to Data. IDK why it has to be like this, or it will fail to be correct Data.
+            let data = try? JSONSerialization.data(withJSONObject: json, options: .prettyPrinted)
+            httpPost(jsondata: data!, url: url!)
         }
     }
     
-    func httpPost(datastring: String, url: URL) {
-        if datastring.count > 0 {
+    func httpPost(jsondata: Data, url: URL) {
+        if !jsondata.isEmpty {
             var request = URLRequest(url: url)
             request.httpMethod = "POST"
-            request.httpBody = datastring.data(using: .utf8)
+            request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
+            request.httpBody = jsondata
             
             URLSession.shared.getAllTasks { (openTasks: [URLSessionTask]) in
                 NSLog("open tasks: \(openTasks)")
@@ -253,7 +297,6 @@ class CurrentViewController: UIViewController, WKUIDelegate, WKNavigationDelegat
                     
                     // extract data if no error
                     self.chartLink = json["link"] as! String
-                    
                     
                 } catch {
                     self.chartLink = "Error"
@@ -294,8 +337,11 @@ class CurrentViewController: UIViewController, WKUIDelegate, WKNavigationDelegat
                 // clear chart link
                 self.chartLink = ""
                 
-                // http post to get chart link
-                retrieveChartPicture()
+                let when = DispatchTime.now() + 0.5 // delay 0.5 second for plotOptions to be updated
+                DispatchQueue.main.asyncAfter(deadline: when) {
+                    // http post to get chart link
+                    self.retrieveChartPicture()
+                }
             } else {
                 webView.isHidden = true
                 loaded = true
@@ -313,12 +359,14 @@ class CurrentViewController: UIViewController, WKUIDelegate, WKNavigationDelegat
                 
                 activityIndicator.isHidden = true
                 webView.isHidden = false
-                
                 // clear chart link
                 self.chartLink = ""
                 
-                // http post to get chart link
-                retrieveChartPicture()
+                let when = DispatchTime.now() + 0.5 // delay 0.5 second for plotOptions to be updated
+                DispatchQueue.main.asyncAfter(deadline: when) {
+                    // http post to get chart link
+                    self.retrieveChartPicture()
+                }
             } else if self.error[SMA_URL] != nil && self.error[SMA_URL]! {
                 webView.isHidden = true
                 loaded = true
@@ -335,12 +383,14 @@ class CurrentViewController: UIViewController, WKUIDelegate, WKNavigationDelegat
                 loaded = true
                 activityIndicator.isHidden = true
                 webView.isHidden = false
-                
                 // clear chart link
                 self.chartLink = ""
                 
-                // http post to get chart link
-                retrieveChartPicture()
+                let when = DispatchTime.now() + 0.5 // delay 0.5 second for plotOptions to be updated
+                DispatchQueue.main.asyncAfter(deadline: when) {
+                    // http post to get chart link
+                    self.retrieveChartPicture()
+                }
             } else if self.error[EMA_URL] != nil && self.error[EMA_URL]! {
                 webView.isHidden = true
                 loaded = true
@@ -355,12 +405,14 @@ class CurrentViewController: UIViewController, WKUIDelegate, WKNavigationDelegat
                 loaded = true
                 activityIndicator.isHidden = true
                 webView.isHidden = false
-                
                 // clear chart link
                 self.chartLink = ""
                 
-                // http post to get chart link
-                retrieveChartPicture()
+                let when = DispatchTime.now() + 0.5 // delay 0.5 second for plotOptions to be updated
+                DispatchQueue.main.asyncAfter(deadline: when) {
+                    // http post to get chart link
+                    self.retrieveChartPicture()
+                }
             } else if self.error[STOCH_URL] != nil && self.error[STOCH_URL]! {
                 webView.isHidden = true
                 loaded = true
@@ -375,12 +427,14 @@ class CurrentViewController: UIViewController, WKUIDelegate, WKNavigationDelegat
                 loaded = true
                 activityIndicator.isHidden = true
                 webView.isHidden = false
-                
                 // clear chart link
                 self.chartLink = ""
                 
-                // http post to get chart link
-                retrieveChartPicture()
+                let when = DispatchTime.now() + 0.5 // delay 0.5 second for plotOptions to be updated
+                DispatchQueue.main.asyncAfter(deadline: when) {
+                    // http post to get chart link
+                    self.retrieveChartPicture()
+                }
             } else if self.error[RSI_URL] != nil && self.error[RSI_URL]! {
                 webView.isHidden = true
                 loaded = true
@@ -399,8 +453,11 @@ class CurrentViewController: UIViewController, WKUIDelegate, WKNavigationDelegat
                 // clear chart link
                 self.chartLink = ""
                 
-                // http post to get chart link
-                retrieveChartPicture()
+                let when = DispatchTime.now() + 0.5 // delay 0.5 second for plotOptions to be updated
+                DispatchQueue.main.asyncAfter(deadline: when) {
+                    // http post to get chart link
+                    self.retrieveChartPicture()
+                }
             } else if self.error[ADX_URL] != nil && self.error[ADX_URL]! {
                 webView.isHidden = true
                 loaded = true
@@ -415,12 +472,14 @@ class CurrentViewController: UIViewController, WKUIDelegate, WKNavigationDelegat
             loaded = true
                 activityIndicator.isHidden = true
                 webView.isHidden = false
-                
                 // clear chart link
                 self.chartLink = ""
                 
-                // http post to get chart link
-                retrieveChartPicture()
+                let when = DispatchTime.now() + 0.5 // delay 0.5 second for plotOptions to be updated
+                DispatchQueue.main.asyncAfter(deadline: when) {
+                    // http post to get chart link
+                    self.retrieveChartPicture()
+                }
             } else if self.error[CCI_URL] != nil && self.error[CCI_URL]! {
                 webView.isHidden = true
                 loaded = true
@@ -439,8 +498,11 @@ class CurrentViewController: UIViewController, WKUIDelegate, WKNavigationDelegat
                 // clear chart link
                 self.chartLink = ""
                 
-                // http post to get chart link
-                retrieveChartPicture()
+                let when = DispatchTime.now() + 0.5 // delay 0.5 second for plotOptions to be updated
+                DispatchQueue.main.asyncAfter(deadline: when) {
+                    // http post to get chart link
+                    self.retrieveChartPicture()
+                }
             } else if self.error[BBANDS_URL] != nil && self.error[BBANDS_URL]! {
                 webView.isHidden = true
                 loaded = true
@@ -459,8 +521,11 @@ class CurrentViewController: UIViewController, WKUIDelegate, WKNavigationDelegat
                 // clear chart link
                 self.chartLink = ""
                 
-                // http post to get chart link
-                retrieveChartPicture()
+                let when = DispatchTime.now() + 0.5 // delay 0.5 second for plotOptions to be updated
+                DispatchQueue.main.asyncAfter(deadline: when) {
+                    // http post to get chart link
+                    self.retrieveChartPicture()
+                }
             } else if self.error[MACD_URL] != nil && self.error[MACD_URL]! {
                 webView.isHidden = true
                 loaded = true
@@ -481,6 +546,7 @@ class CurrentViewController: UIViewController, WKUIDelegate, WKNavigationDelegat
         // make http get request
         var request = URLRequest(url: requestURL ?? URL(string: SERVER_URL + AUTO_URL)!)
         request.httpMethod = "GET"
+        
         
         let task = URLSession.shared.dataTask(with: requestURL ?? URL(string: SERVER_URL + AUTO_URL)!){
             (data, response, error) in
@@ -534,15 +600,6 @@ class CurrentViewController: UIViewController, WKUIDelegate, WKNavigationDelegat
         }
         
         task.resume()
-=======
-
-class CurrentViewController: UIViewController {
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
->>>>>>> origin/master
     }
 
     override func didReceiveMemoryWarning() {
@@ -550,12 +607,14 @@ class CurrentViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
-<<<<<<< HEAD
     func setupTableView() {
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "MyCell")
         tableView.dataSource = self
         tableView.delegate = self
         tableView.reloadData()
+        let backgroundView = UIView(frame: CGRect(x: 0, y: 0, width: self.tableView.bounds.size.width, height: self.tableView.bounds.size.height))
+        backgroundView.backgroundColor = UIColor(red: 238/255, green: 243/255, blue: 249/255, alpha: 255/255)
+        self.tableView.backgroundView = backgroundView
     }
     
     func setupPickerView() {
@@ -565,7 +624,11 @@ class CurrentViewController: UIViewController {
     }
     
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
-        return numOfPickerComponents
+        // hide picker row lines
+        pickerView.subviews.forEach({
+            $0.isHidden = $0.frame.height < 1.0
+        })
+        return 1
     }
     
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
@@ -580,7 +643,17 @@ class CurrentViewController: UIViewController {
         selectedPickerValue = row
     }
     
-    
+    func pickerView(_ pickerView: UIPickerView, viewForRow row: Int, forComponent component: Int, reusing view: UIView?) -> UIView {
+        var pickerLabel: UILabel? = (view as? UILabel)
+        if pickerLabel == nil {
+            pickerLabel = UILabel()
+            pickerLabel?.font = UIFont(name: "Arial", size: 20.0)
+            pickerLabel?.textAlignment = .center
+        }
+        pickerLabel?.text = pickerData[row]
+        
+        return pickerLabel!
+    }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: false)
@@ -591,7 +664,19 @@ class CurrentViewController: UIViewController {
         var metadata = tsdData["Meta Data"] as? [String: String] ?? [:]
         var tsd = tsdData["Time Series (Daily)"] as? [String: [String: String]] ?? [:]
         if tsd.count > 0 {
+            
+            // update star
+            for stock in stocks {
+                if stock.symbol == metadata["2. Symbol"] {
+                    setFav()
+                    break
+                }
+            }
+            
+            // update dates, used in charts
             dates = getDates(tsd as [String : AnyObject])
+            
+            //update row data
             
             let lastDayData = tsd[dates[0]]!
             let previousDayData = tsd[dates[1]]!
@@ -643,15 +728,16 @@ class CurrentViewController: UIViewController {
         if indexPath.row == 2 && change > 0 {
             let image: UIImage = UIImage(named: "up_arrow")!
             let imageView = UIImageView(image: image)
-            imageView.frame = CGRect(x: 235, y: 7, width: 20, height: 20)
+            imageView.frame = CGRect(x: 240, y: 7, width: 20, height: 20)
             cell.contentView.addSubview(imageView)
         } else if indexPath.row == 2 && change < 0{
             let image: UIImage = UIImage(named: "down_arrow")!
             let imageView = UIImageView(image: image)
-            imageView.frame = CGRect(x: 235, y: 7, width: 20, height: 20)
+            imageView.frame = CGRect(x: 240, y: 7, width: 20, height: 20)
             cell.contentView.addSubview(imageView)
         }
         
+        cell.backgroundColor = UIColor.clear
         return cell
     }
 
@@ -700,9 +786,12 @@ class CurrentViewController: UIViewController {
         
         fbTimer?.invalidate()
         fbTimer = nil
-        timer?.invalidate()
-        timer = nil
     }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(true)
+    }
+    
     
     override func loadView() {
         super.loadView()
@@ -710,7 +799,7 @@ class CurrentViewController: UIViewController {
         // listen for callback from javascript
         self.webView.configuration.userContentController.add(self, name: "callbackHandler")
         
-        activityIndicator.color = UIColor.green
+        activityIndicator.color = UIColor.orange
     }
     
     func loadHTML() {
@@ -759,9 +848,6 @@ class CurrentViewController: UIViewController {
         }
     }
     
-=======
-
->>>>>>> origin/master
     /*
     // MARK: - Navigation
 

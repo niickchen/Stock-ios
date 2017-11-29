@@ -7,7 +7,6 @@
 //
 
 import UIKit
-<<<<<<< HEAD
 import WebKit
 
 class HistoricalViewController: UIViewController, WKUIDelegate, WKNavigationDelegate {
@@ -20,6 +19,8 @@ class HistoricalViewController: UIViewController, WKUIDelegate, WKNavigationDele
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        self.view.backgroundColor = UIColor(red: 238/255, green: 243/255, blue: 249/255, alpha: 255/255)
 
         setUpWebView()
         
@@ -29,15 +30,6 @@ class HistoricalViewController: UIViewController, WKUIDelegate, WKNavigationDele
             self.activityIndicator.isHidden = true
         }
         
-=======
-
-class HistoricalViewController: UIViewController {
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
->>>>>>> origin/master
     }
 
     override func didReceiveMemoryWarning() {
@@ -45,7 +37,6 @@ class HistoricalViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
-<<<<<<< HEAD
     func setUpWebView() {
         // setup webView
         webView.scrollView.bounces = false
@@ -92,9 +83,6 @@ class HistoricalViewController: UIViewController {
         }
     }
     
-=======
-
->>>>>>> origin/master
     /*
     // MARK: - Navigation
 

@@ -38,6 +38,7 @@ function reloadPrice(sBinaryParam) {
     dates = dates.map(data => data.substring(5, 10).replace('-', '/'));
     var options = {
     chart: {
+    backgroundColor: '#eef3f9',
     zoomType: "x"
     },
     title: {
@@ -144,6 +145,7 @@ function reloadMACD(sBinaryParam) {
     dates = dates.map(data => data.substring(5, 10).replace('-', '/'));
     var options = {
     chart: {
+    backgroundColor: '#eef3f9',
     type: 'line',
     zoomType: "x"
     },
@@ -239,6 +241,7 @@ function reloadRSI(sBinaryParam) {
     dates = dates.map(data => data.substring(5, 10).replace('-', '/'));
     var options = {
     chart: {
+    backgroundColor: '#eef3f9',
     type: 'line',
     zoomType: "x"
     },
@@ -320,6 +323,7 @@ function reloadSMA(sBinaryParam) {
     dates = dates.map(data => data.substring(5, 10).replace('-', '/'));
     var options = {
     chart: {
+        backgroundColor: '#eef3f9',
     type: 'line',
     zoomType: "x"
     },
@@ -414,6 +418,7 @@ function reloadSTOCH(sBinaryParam) {
     
     var options = {
     chart: {
+        backgroundColor: '#eef3f9',
     type: 'line',
     zoomType: "x"
     },
@@ -515,6 +520,7 @@ function reloadEMA(sBinaryParam) {
     dates = dates.map(data => data.substring(5, 10).replace('-', '/'));
     var options = {
     chart: {
+        backgroundColor: '#eef3f9',
     type: 'line',
     zoomType: "x"
     },
@@ -606,6 +612,7 @@ function reloadCCI(sBinaryParam) {
     dates = dates.map(data => data.substring(5, 10).replace('-', '/'));
     var options = {
     chart: {
+        backgroundColor: '#eef3f9',
     type: 'line',
     zoomType: "x"
     },
@@ -704,6 +711,7 @@ function reloadBBANDS(sBinaryParam) {
     
     var options = {
     chart: {
+        backgroundColor: '#eef3f9',
     type: 'line',
     zoomType: "x"
     },
@@ -812,6 +820,7 @@ function reloadADX(sBinaryParam) {
     dates = dates.map(data => data.substring(5, 10).replace('-', '/'));
     var options = {
     chart: {
+        backgroundColor: '#eef3f9',
     type: 'line',
     zoomType: "x"
     },
@@ -889,7 +898,7 @@ function reloadADX(sBinaryParam) {
 </script>
 </head>
 
-<body>
+<body style="background-color: RGB(238,243,249)">
 <div style="width: 100%; height:100%;" id="container"></div>
 </body>
 
