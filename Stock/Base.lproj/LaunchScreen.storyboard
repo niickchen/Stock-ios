@@ -6,7 +6,6 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13527"/>
-        <capability name="Alignment constraints to the first baseline" minToolsVersion="6.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -19,54 +18,62 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Enter Stock Ticker Symbol" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="4Wx-JP-ONJ">
-                                <rect key="frame" x="38" y="162" width="300" height="30"/>
-                                <nil key="textColor"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <textInputTraits key="textInputTraits"/>
-                            </textField>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7M5-de-q5k">
-                                <rect key="frame" x="255" y="217" width="49" height="36"/>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="S4h-HU-4rn">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="318"/>
+                                <subviews>
+                                    <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Enter Stock Ticker Symbol" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="thq-bu-QBg">
+                                        <rect key="frame" x="38" y="173" width="298" height="30"/>
+                                        <nil key="textColor"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <textInputTraits key="textInputTraits"/>
+                                    </textField>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Stock Market Search" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="oqd-ex-V2Q">
+                                        <rect key="frame" x="56" y="102" width="263" height="30"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="30" id="MgN-nc-FiK"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="28"/>
+                                        <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="K9n-uz-anP">
+                                        <rect key="frame" x="255" y="228" width="49" height="36"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="49" id="9yr-WP-dDV"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="system" weight="medium" pointSize="20"/>
+                                        <state key="normal" title="Clear">
+                                            <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        </state>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mtr-5P-TcX">
+                                        <rect key="frame" x="68" y="228" width="92" height="36"/>
+                                        <fontDescription key="fontDescription" type="system" weight="medium" pointSize="20"/>
+                                        <state key="normal" title="Get Quote">
+                                            <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        </state>
+                                    </button>
+                                </subviews>
+                                <color key="backgroundColor" red="0.3435367942" green="0.69343835119999997" blue="0.95124894380000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="49" id="uFL-ZL-6u8"/>
+                                    <constraint firstItem="mtr-5P-TcX" firstAttribute="baseline" secondItem="K9n-uz-anP" secondAttribute="baseline" id="97q-D8-zn9"/>
+                                    <constraint firstItem="thq-bu-QBg" firstAttribute="leading" secondItem="S4h-HU-4rn" secondAttribute="leading" constant="38" id="Gzj-5d-bF4"/>
+                                    <constraint firstItem="thq-bu-QBg" firstAttribute="centerX" secondItem="S4h-HU-4rn" secondAttribute="centerX" id="KYL-Co-rWg"/>
+                                    <constraint firstAttribute="bottom" secondItem="mtr-5P-TcX" secondAttribute="bottom" constant="54" id="LSq-0t-D4D"/>
+                                    <constraint firstItem="mtr-5P-TcX" firstAttribute="leading" secondItem="S4h-HU-4rn" secondAttribute="leading" constant="68" id="N0p-DT-h1a"/>
+                                    <constraint firstItem="mtr-5P-TcX" firstAttribute="top" secondItem="thq-bu-QBg" secondAttribute="bottom" constant="25" id="aOG-OV-N6L"/>
+                                    <constraint firstItem="K9n-uz-anP" firstAttribute="leading" secondItem="mtr-5P-TcX" secondAttribute="trailing" constant="95" id="fyr-WG-r1M"/>
+                                    <constraint firstItem="thq-bu-QBg" firstAttribute="top" secondItem="oqd-ex-V2Q" secondAttribute="bottom" constant="41" id="grX-uf-0MI"/>
+                                    <constraint firstItem="oqd-ex-V2Q" firstAttribute="centerX" secondItem="thq-bu-QBg" secondAttribute="centerX" id="oEf-bd-bNM"/>
                                 </constraints>
-                                <fontDescription key="fontDescription" type="system" weight="medium" pointSize="20"/>
-                                <state key="normal" title="Clear">
-                                    <color key="titleColor" red="0.34335601329999998" green="0.69281107190000002" blue="0.9543980956" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                </state>
-                            </button>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Stock Market Search" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kV2-Pk-wnR">
-                                <rect key="frame" x="56" y="102" width="263" height="30"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="30" id="0hV-l4-v3l"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="28"/>
-                                <color key="textColor" red="0.33543920519999998" green="0.6853592396" blue="0.95142787689999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="dfb-KZ-qwt">
-                                <rect key="frame" x="68" y="220" width="95" height="30"/>
-                                <fontDescription key="fontDescription" type="system" weight="medium" pointSize="20"/>
-                                <state key="normal" title="Get Quote">
-                                    <color key="titleColor" red="0.34335601329999998" green="0.69281107190000002" blue="0.9543980956" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                </state>
-                            </button>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" red="0.93262624740600586" green="0.95263379812240601" blue="0.9775274395942688" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstItem="kV2-Pk-wnR" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="58" id="51w-Lo-3pq"/>
-                            <constraint firstItem="4Wx-JP-ONJ" firstAttribute="top" secondItem="kV2-Pk-wnR" secondAttribute="bottom" constant="30" id="5dT-KP-o6Z"/>
-                            <constraint firstItem="4Wx-JP-ONJ" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="38" id="Ea5-Yp-Qm9"/>
-                            <constraint firstItem="7M5-de-q5k" firstAttribute="baseline" secondItem="dfb-KZ-qwt" secondAttribute="firstBaseline" id="GMi-0j-Hds"/>
-                            <constraint firstItem="dfb-KZ-qwt" firstAttribute="baseline" secondItem="7M5-de-q5k" secondAttribute="firstBaseline" id="QkM-l2-Xs1"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="7M5-de-q5k" secondAttribute="bottom" constant="525" id="Rql-94-ovN"/>
-                            <constraint firstItem="7M5-de-q5k" firstAttribute="top" secondItem="4Wx-JP-ONJ" secondAttribute="bottom" constant="25" id="U0L-xu-ROY"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="7M5-de-q5k" secondAttribute="trailing" constant="71" id="ZGE-Q8-1ak"/>
-                            <constraint firstItem="dfb-KZ-qwt" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="68" id="rWc-aC-TqP"/>
-                            <constraint firstItem="kV2-Pk-wnR" firstAttribute="centerX" secondItem="4Wx-JP-ONJ" secondAttribute="centerX" id="rZW-SX-iWi"/>
-                            <constraint firstItem="kV2-Pk-wnR" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="tb4-sK-GSe"/>
-                            <constraint firstItem="7M5-de-q5k" firstAttribute="leading" secondItem="dfb-KZ-qwt" secondAttribute="trailing" constant="92" id="xDK-Bh-32G"/>
-                            <constraint firstItem="dfb-KZ-qwt" firstAttribute="top" secondItem="4Wx-JP-ONJ" secondAttribute="bottom" constant="28" id="yQ6-SM-IuC"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="S4h-HU-4rn" secondAttribute="bottom" constant="460" id="E8D-33-2jo"/>
+                            <constraint firstAttribute="trailing" secondItem="S4h-HU-4rn" secondAttribute="trailing" id="Heo-5l-iPH"/>
+                            <constraint firstItem="S4h-HU-4rn" firstAttribute="top" secondItem="Ze5-6b-2t3" secondAttribute="top" id="NAs-Mk-m6v"/>
+                            <constraint firstItem="S4h-HU-4rn" firstAttribute="leading" secondItem="Ze5-6b-2t3" secondAttribute="leading" id="YHV-Vx-5rR"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
