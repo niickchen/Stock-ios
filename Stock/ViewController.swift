@@ -13,6 +13,28 @@ import CoreData
 let SERVER_URL = "http://stocksite-env.us-west-1.elasticbeanstalk.com"
 let AUTO_URL = "/autocomplete?input="
 
+extension String {
+    func index(from: Int) -> Index {
+        return self.index(startIndex, offsetBy: from)
+    }
+    
+    func substring(from: Int) -> String {
+        let fromIndex = index(from: from)
+        return substring(from: fromIndex)
+    }
+    
+    func substring(to: Int) -> String {
+        let toIndex = index(from: to)
+        return substring(to: toIndex)
+    }
+    
+    func substring(with r: Range<Int>) -> String {
+        let startIndex = index(from: r.lowerBound)
+        let endIndex = index(from: r.upperBound)
+        return substring(with: startIndex..<endIndex)
+    }
+}
+
 extension NSMutableAttributedString {
     @discardableResult func bold(_ text: String) -> NSMutableAttributedString {
         let attrs: [NSAttributedStringKey: Any] = [.font: UIFont.systemFont(ofSize: 15, weight: UIFont.Weight.semibold)]
@@ -77,7 +99,11 @@ class ViewController: UIViewController, UITextFieldDelegate, UITableViewDelegate
     var autolist: [AnyObject] = []
     // faved stocks
     var stocks: [StarredStock] = []
+    var sortedStocks: [StarredStock] = []
     var timer: Timer?
+    
+    var sortby = 0
+    var order = 0
     
     
     @IBOutlet weak var inputField: UITextField!
@@ -116,14 +142,27 @@ class ViewController: UIViewController, UITextFieldDelegate, UITableViewDelegate
     }
     
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        self.sortData()
+        if pickerView == sortPicker {
+            sortby = row
+            if row == 0 {
+                orderPicker.isUserInteractionEnabled = false
+            } else {
+                orderPicker.isUserInteractionEnabled = true
+            }
+        }
+        else {
+            order = row
+        }
+        self.sortData(sortBy: sortby, order: order)
+        self.favedStockTableView.reloadData()
     }
     
     func pickerView(_ pickerView: UIPickerView, viewForRow row: Int, forComponent component: Int, reusing view: UIView?) -> UIView {
         var pickerLabel: UILabel? = (view as? UILabel)
         if pickerLabel == nil {
             pickerLabel = UILabel()
-            pickerLabel?.font = UIFont(name: "Arial", size: 20.0)
+            pickerLabel?.font = UIFont(name: "Arial", size: 16.0)
+            pickerLabel?.textColor = UIColor(red: 35/255, green: 155/255, blue: 125/255, alpha: 255/255)
             pickerLabel?.textAlignment = .center
         }
         if pickerView == sortPicker {
@@ -134,7 +173,76 @@ class ViewController: UIViewController, UITextFieldDelegate, UITableViewDelegate
         return pickerLabel!
     }
     
-    func sortData() {
+    func sortData(sortBy: Int, order: Int) {
+        sortedStocks = stocks
+        switch sortBy
+        {
+        // default
+        case 0:
+            return
+            
+            
+        // symbol
+        case 1:
+            if order == 0 {
+                sortedStocks = sortedStocks.sorted(by: { $0.symbol! < $1.symbol! })
+            } else {
+                sortedStocks = sortedStocks.sorted(by: { $0.symbol! > $1.symbol! })
+            }
+            
+            
+        // price
+        case 2:
+            if order == 0 {
+                sortedStocks = sortedStocks.sorted(by: { Double($0.price!)! < Double($1.price!)! })
+            } else {
+                sortedStocks = sortedStocks.sorted(by: { Double($0.price!)! > Double($1.price!)! })
+            }
+            
+            
+        // change
+        case 3:
+            if order == 0 {
+                sortedStocks = sortedStocks.sorted(by: { (a, b) in
+                    let sa = a.change?.components(separatedBy: " (").first ?? ""
+                    let sb = b.change?.components(separatedBy: " (").first ?? ""
+                    
+                    return Double(sa)! < Double(sb)!
+                     })
+            } else {
+                sortedStocks = sortedStocks.sorted(by: { (a, b) in
+                    let sa = a.change?.components(separatedBy: " (").first ?? ""
+                    let sb = b.change?.components(separatedBy: " (").first ?? ""
+                    
+                    return Double(sa)! > Double(sb)!
+                     })
+            }
+            
+        // change percent
+        case 4:
+            if order == 0 {
+                sortedStocks = sortedStocks.sorted(by: { (a, b) in
+                    let arra = a.change?.components(separatedBy: " (")
+                    let arrb = b.change?.components(separatedBy: " (")
+                    let sa = arra![1].components(separatedBy: "%").first ?? ""
+                    let sb = arrb![1].components(separatedBy: "%").first ?? ""
+                    
+                    return Double(sa)! < Double(sb)!
+                })
+            } else {
+                sortedStocks = sortedStocks.sorted(by: { (a, b) in
+                    let arra = a.change?.components(separatedBy: " (")
+                    let arrb = b.change?.components(separatedBy: " (")
+                    let sa = arra![1].components(separatedBy: "%").first ?? ""
+                    let sb = arrb![1].components(separatedBy: "%").first ?? ""
+                    
+                    return Double(sa)! > Double(sb)!
+                })
+            }
+        
+        default:
+            return
+        }
         
     }
     
@@ -161,13 +269,13 @@ class ViewController: UIViewController, UITextFieldDelegate, UITableViewDelegate
         
         
         // do nothing if auto refresh is on or no faved stocks
-        if self.switch.isOn || self.stocks.count == 0 {
+        if self.switch.isOn || self.sortedStocks.count == 0 {
             return
         }
         
         self.activityIndicator.isHidden = false
         
-        for stock in stocks {
+        for stock in sortedStocks {
             fetchData(symbol: stock.symbol!, url: TIME_SERIES_DAILY_URL)
         }
         
@@ -241,7 +349,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UITableViewDelegate
             self.favedStockTableView.reloadData()
         }
         
-        for stock in stocks {
+        for stock in sortedStocks {
             fetchData(symbol: stock.symbol!, url: TIME_SERIES_DAILY_URL)
         }
     }
@@ -266,6 +374,9 @@ class ViewController: UIViewController, UITextFieldDelegate, UITableViewDelegate
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = UIColor(red: 238/255, green: 243/255, blue: 249/255, alpha: 255/255)
+        
+        // disable order options when table sorted by default
+        orderPicker.isUserInteractionEnabled = false
         
         // retrieve core data
         getData()
@@ -306,6 +417,12 @@ class ViewController: UIViewController, UITextFieldDelegate, UITableViewDelegate
         favedStockTableView.reloadData()
         
         self.switch.onTintColor = UIColor(red: 87/255, green: 175/255, blue: 244/255, alpha: 255/255)
+        
+        // setup picker views
+        sortPicker.dataSource = self
+        sortPicker.delegate = self
+        orderPicker.dataSource = self
+        orderPicker.delegate = self
     }
     
     
@@ -394,7 +511,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UITableViewDelegate
         else {
             
             
-            return stocks.count
+            return sortedStocks.count
         }
         
     }
@@ -418,36 +535,36 @@ class ViewController: UIViewController, UITextFieldDelegate, UITableViewDelegate
             let cell = tableView.dequeueReusableCell(withIdentifier: "sCell", for: indexPath as IndexPath)
             
             if let symbolLabel = cell.viewWithTag(100) as? UILabel {
-                symbolLabel.text = stocks[indexPath.row].symbol
+                symbolLabel.text = sortedStocks[indexPath.row].symbol
             }
             else {
                 let symbolLabel = UILabel(frame: CGRect(x: 20, y: 21, width: 50, height: 19))
                 symbolLabel.textColor = UIColor(red: 29/255, green: 41/255, blue: 81/255, alpha: 255/255)
                 symbolLabel.textAlignment = .center
                 symbolLabel.tag = 100
-                symbolLabel.text = stocks[indexPath.row].symbol
+                symbolLabel.text = sortedStocks[indexPath.row].symbol
                 cell.contentView.addSubview(symbolLabel)
             }
             
             if let priceLabel = cell.viewWithTag(200) as? UILabel {
-                priceLabel.text = "$\(stocks[indexPath.row].price ?? "")"
+                priceLabel.text = "$\(sortedStocks[indexPath.row].price ?? "")"
             }
             else {
                 let priceLabel = UILabel(frame: CGRect(x: 100, y: 21, width: 70, height: 19))
                 priceLabel.textColor = UIColor(red: 29/255, green: 41/255, blue: 81/255, alpha: 255/255)
                 priceLabel.textAlignment = .center
                 priceLabel.tag = 200
-                priceLabel.text = "$\(stocks[indexPath.row].price ?? "")"
+                priceLabel.text = "$\(sortedStocks[indexPath.row].price ?? "")"
                 cell.contentView.addSubview(priceLabel)
             }
             
             if let changeLabel = cell.viewWithTag(300) as? UILabel {
                 let formattedString = NSMutableAttributedString()
-                if Double(stocks[indexPath.row].change?.components(separatedBy: " ")[0] ?? "0")! > 0 {
-                    formattedString.green(stocks[indexPath.row].change!)
+                if Double(sortedStocks[indexPath.row].change?.components(separatedBy: " ")[0] ?? "0")! > 0 {
+                    formattedString.green(sortedStocks[indexPath.row].change!)
                     changeLabel.attributedText = formattedString
-                } else if Double(stocks[indexPath.row].change?.components(separatedBy: " ")[0] ?? "0")! < 0 {
-                    formattedString.red(stocks[indexPath.row].change!)
+                } else if Double(sortedStocks[indexPath.row].change?.components(separatedBy: " ")[0] ?? "0")! < 0 {
+                    formattedString.red(sortedStocks[indexPath.row].change!)
                     changeLabel.attributedText = formattedString
                 } else {
                     changeLabel.text = "0.00 (0.00%)"
@@ -459,11 +576,11 @@ class ViewController: UIViewController, UITextFieldDelegate, UITableViewDelegate
                 changeLabel.textAlignment = .center
                 changeLabel.tag = 300
                 let formattedString = NSMutableAttributedString()
-                if Double(stocks[indexPath.row].change?.components(separatedBy: " ")[0] ?? "0")! > 0 {
-                    formattedString.green(stocks[indexPath.row].change!)
+                if Double(sortedStocks[indexPath.row].change?.components(separatedBy: " ")[0] ?? "0")! > 0 {
+                    formattedString.green(sortedStocks[indexPath.row].change!)
                     changeLabel.attributedText = formattedString
-                } else if Double(stocks[indexPath.row].change?.components(separatedBy: " ")[0] ?? "0")! < 0 {
-                    formattedString.red(stocks[indexPath.row].change!)
+                } else if Double(sortedStocks[indexPath.row].change?.components(separatedBy: " ")[0] ?? "0")! < 0 {
+                    formattedString.red(sortedStocks[indexPath.row].change!)
                     changeLabel.attributedText = formattedString
                 } else {
                     changeLabel.text = "0.00 (0.00%)"
@@ -483,7 +600,10 @@ class ViewController: UIViewController, UITextFieldDelegate, UITableViewDelegate
     func getData() {
         do {
             let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+            // receive stock data
             stocks = try context.fetch(StarredStock.fetchRequest())
+            // sort stock data
+            sortData(sortBy: sortby, order: order)
         } catch {
             print("Fetching Failed")
         }
