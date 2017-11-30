@@ -66,7 +66,7 @@ class CurrentViewController: UIViewController, WKUIDelegate, WKNavigationDelegat
     
     // This is bad. This is real bad.
     // TODO: Should have used customized cell to implement two columns.
-    let rowHeader = ["Stock Symbol      ", "Last Price              ", "Change                  ", "Timestamp           ", "Open                       ", "Close                      ", "Day's Range         ", "Volume                   "]
+    let rowHeader = ["Stock Symbol", "Last Price", "Change", "Timestamp", "Open", "Close", "Day's Range", "Volume"]
     var rowContent: [String] = ["", "", "", "", "", "", "", ""]
     let pickerData = ["Price", "SMA", "EMA", "STOCH", "RSI", "ADX", "CCI", "BBANDS", "MACD"]
     let urls = [TIME_SERIES_DAILY_URL, SMA_URL, EMA_URL, STOCH_URL, RSI_URL, ADX_URL, CCI_URL, BBANDS_URL, MACD_URL]
@@ -162,7 +162,7 @@ class CurrentViewController: UIViewController, WKUIDelegate, WKNavigationDelegat
         
         if !starredStatus {
             let stock = StarredStock(context: context) // Link Task & Context
-            // save to core data
+            // Save to core data
             stock.symbol = rowContent[0]
             stock.price = rowContent[1]
             stock.change = rowContent[2]
@@ -170,20 +170,19 @@ class CurrentViewController: UIViewController, WKUIDelegate, WKNavigationDelegat
             // Save the data to coredata
             (UIApplication.shared.delegate as! AppDelegate).saveContext()
             
-            // update local data
+            // Update local data
             getData()
             
             // Set fav star
             setFav()
             
+            // Delete faved stock
         } else {
-            for stock in stocks {
-                if stock.symbol == rowContent[0] {
-                    context.delete(stock)
-                    break
-                }
+            let objs = get(withPredicate: NSPredicate(format: "symbol == %@", rowContent[0]))
+            for obj in objs {
+                context.delete(obj)
             }
-            // update local data
+            // Update local data
             getData()
             
             // Remove fav star
@@ -659,18 +658,47 @@ class CurrentViewController: UIViewController, WKUIDelegate, WKNavigationDelegat
         tableView.deselectRow(at: indexPath, animated: false)
     }
     
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    // update core data
+    func updateData(obj: StarredStock, data: [String: String]) {
+        let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+        let stock = obj
+        // update core data
+        stock.price = data["price"]
+        stock.change = data["change"]
+        stock.volume = data["volume"]
+        // Save the data to coredata
+        (UIApplication.shared.delegate as! AppDelegate).saveContext()
+    }
+    
+    // fetch with predicate
+    func get(withPredicate queryPredicate: NSPredicate) -> [StarredStock]{
+        let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+        let fetchRequest: NSFetchRequest<StarredStock> = StarredStock.fetchRequest()
+        
+        fetchRequest.predicate = queryPredicate
+        
+        do {
+            let response = try context.fetch(fetchRequest)
+            return response as! [StarredStock]
+            
+        } catch let error as NSError {
+            // failure
+            print(error)
+            return [StarredStock]()
+        }
+    }
+    
+    func processTableData() {
         // process table data
         var metadata = tsdData["Meta Data"] as? [String: String] ?? [:]
         var tsd = tsdData["Time Series (Daily)"] as? [String: [String: String]] ?? [:]
         if tsd.count > 0 {
             
             // update star
-            for stock in stocks {
-                if stock.symbol == metadata["2. Symbol"] {
-                    setFav()
-                    break
-                }
+            
+            let objs = get(withPredicate: NSPredicate(format: "symbol == %@", metadata["2. Symbol"]!))
+            if objs.count > 0 {
+                setFav()
             }
             
             // update dates, used in charts
@@ -689,6 +717,12 @@ class CurrentViewController: UIViewController, WKUIDelegate, WKNavigationDelegat
             let timestamp: String
             let changeValue = lastPrice! - lastClose!
             let changePercent = changeValue / lastClose! * 100
+            
+            let symbol = metadata["2. Symbol"] ?? ""
+            let price = String(format: "%.2f", lastPrice!)
+            let changeString = String(format: "%.2f", changeValue) + " (" + String(format: "%.2f", changePercent) + "%)"
+            
+            
             if changeValue < 0 {
                 change = -1
             } else if changeValue > 0 {
@@ -704,43 +738,81 @@ class CurrentViewController: UIViewController, WKUIDelegate, WKNavigationDelegat
             }
             
             if metadata["3. Last Refreshed"]!.count > 12 {
-                rowContent = [metadata["2. Symbol"] ?? "", String(format: "%.2f", lastPrice!), String(format: "%.2f", changeValue) + " (" + String(format: "%.2f", changePercent) + "%)", timestamp, String(format: "%.2f", open!), String(format: "%.2f", lastClose!), String(format: "%.2f", low!) + String(format: "%.2f", high!), volume!]
+                rowContent = [symbol, price, changeString, timestamp, String(format: "%.2f", open!), String(format: "%.2f", lastClose!), String(format: "%.2f", low!) + String(format: "%.2f", high!), volume!]
             } else {
-                rowContent = [metadata["2. Symbol"] ?? "", String(format: "%.2f", lastPrice!), String(format: "%.2f", changeValue) + " (" + String(format: "%.2f", changePercent) + "%)", timestamp, String(format: "%.2f", open!), String(format: "%.2f", lastPrice!), String(format: "%.2f", low!) + " - " + String(format: "%.2f", high!), volume!]
+                rowContent = [symbol, price, changeString, timestamp, String(format: "%.2f", open!), String(format: "%.2f", lastPrice!), String(format: "%.2f", low!) + " - " + String(format: "%.2f", high!), volume!]
+            }
+            
+           
+            
+            // update core data
+            if starredStatus {
+                
+                // get this StarredStock from core data
+                let objs = get(withPredicate: NSPredicate(format: "symbol == %@", rowContent[0]))
+                for obj in objs {
+                    let data = ["symbol": symbol, "price": price, "change": changeString, "volume": volume ?? ""] as! [String : String]
+                    updateData(obj: obj, data: data)
+                }
             }
         }
-        
-        
-        
+    }
+    
+    
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        processTableData()
         return rowNumber
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "MyCell", for: indexPath as IndexPath)
-        let formattedString = NSMutableAttributedString()
-        formattedString.bold(rowHeader[indexPath.row]).normal(rowContent[indexPath.row])
-        cell.textLabel!.attributedText = formattedString
-        cell.contentView.layoutMargins.right = 0
-        cell.textLabel!.numberOfLines = 0
-        cell.textLabel!.lineBreakMode = NSLineBreakMode.byWordWrapping
+        
+        if let titleLabel = cell.viewWithTag(100) as? UILabel {
+            titleLabel.attributedText = NSMutableAttributedString().bold(rowHeader[indexPath.row])
+        }
+        else {
+            let titleLabel = UILabel(frame: CGRect(x: 20, y: 11, width: 110, height: 17))
+            titleLabel.textAlignment = .left
+            titleLabel.tag = 100
+            titleLabel.textColor = UIColor(red: 29/255, green: 41/255, blue: 81/255, alpha: 255/255)
+            titleLabel.attributedText = NSMutableAttributedString().bold(rowHeader[indexPath.row])
+            cell.contentView.addSubview(titleLabel)
+        }
+        
+        if let infoLabel = cell.viewWithTag(200) as? UILabel {
+            infoLabel.attributedText = NSMutableAttributedString().normal(rowContent[indexPath.row])
+        }
+        else {
+            let infoLabel = UILabel(frame: CGRect(x: 140, y: 11, width: 190, height: 17))
+            infoLabel.textAlignment = .left
+            infoLabel.tag = 200
+            infoLabel.textColor = UIColor(red: 29/255, green: 41/255, blue: 81/255, alpha: 255/255)
+            infoLabel.attributedText = NSMutableAttributedString().normal(rowContent[indexPath.row])
+            cell.contentView.addSubview(infoLabel)
+        }
         
         // show change indicator arrow
         if indexPath.row == 2 && change > 0 {
             let image: UIImage = UIImage(named: "up_arrow")!
             let imageView = UIImageView(image: image)
-            imageView.frame = CGRect(x: 240, y: 7, width: 20, height: 20)
+            imageView.frame = CGRect(x: 240, y: 11, width: 20, height: 20)
             cell.contentView.addSubview(imageView)
         } else if indexPath.row == 2 && change < 0{
             let image: UIImage = UIImage(named: "down_arrow")!
             let imageView = UIImageView(image: image)
-            imageView.frame = CGRect(x: 240, y: 7, width: 20, height: 20)
+            imageView.frame = CGRect(x: 240, y: 11, width: 20, height: 20)
             cell.contentView.addSubview(imageView)
         }
         
+        cell.contentView.layoutMargins.right = 0
+        cell.textLabel!.numberOfLines = 0
+        cell.textLabel!.lineBreakMode = NSLineBreakMode.byWordWrapping
         cell.backgroundColor = UIColor.clear
         return cell
     }
 
+    // return dates of stock prices in descending order
     func getDates(_ dict: [String: AnyObject]) -> [String] {
         var dates = Array(dict.keys)
         dates = dates.sorted { (a, b) -> Bool in

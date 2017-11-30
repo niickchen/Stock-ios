@@ -101,6 +101,10 @@ class DetailViewController: UIViewController {
         
         self.view.backgroundColor = UIColor(red: 238/255, green: 243/255, blue: 249/255, alpha: 255/255)
         self.navigationController?.navigationBar.barTintColor = UIColor(red: 87/255, green: 175/255, blue: 244/255, alpha: 255/255)
+        // Status bar white font
+        self.navigationController?.navigationBar.barStyle = UIBarStyle.black
+        // White back button
+        self.navigationController?.navigationBar.tintColor = UIColor.white
         
         // Do any additional setup after loading the view.
         containerIndex = 0
@@ -212,6 +216,7 @@ class DetailViewController: UIViewController {
                         break
                     }
                 }
+                
                 // if received data correctly, show historical view
                 if self.error[TIME_SERIES_DAILY_URL] != nil && !self.error[TIME_SERIES_DAILY_URL]! {
                     // TODO: Prompt error message after 10 seconds if not out of while loop
@@ -321,13 +326,13 @@ class DetailViewController: UIViewController {
         //error = [:]
         //loaded = false
         
-//        URLSession.shared.getAllTasks{ (openTasks: [URLSessionTask]) in
-//            print("Number of open tasks: \(openTasks.count)")
-//            //openTasks.removeAll()
-//            for task in openTasks {
-//                task.cancel()
-//            }
-//        }
+        URLSession.shared.getAllTasks{ (openTasks: [URLSessionTask]) in
+            print("Number of open tasks: \(openTasks.count)")
+            //openTasks.removeAll()
+            for task in openTasks {
+                task.cancel()
+            }
+        }
         
         super.viewWillDisappear(animated)
     }
@@ -371,10 +376,10 @@ class DetailViewController: UIViewController {
         self.navigationController?.navigationBar.isHidden = false
         
         // setup
-        containerIndex = 0
-        stockdata = [:]
-        error = [:]
-        loaded = false
+//        containerIndex = 0
+//        stockdata = [:]
+//        error = [:]
+//        loaded = false
     }
 
     /*

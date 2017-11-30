@@ -102,6 +102,7 @@ class NewsViewController: UIViewController, UITableViewDelegate, UITableViewData
         let formattedString = NSMutableAttributedString()
         formattedString.bold("\(arr["title"]! ?? "")").compact("\n\n").light("  Author: \(arr["sa:author_name"]! ?? "")").compact("\n\n").light("  Date: \(strDate ?? "")")
         cell.textLabel!.attributedText = formattedString
+        cell.textLabel?.textColor = UIColor(red: 29/255, green: 41/255, blue: 81/255, alpha: 255/255)
         cell.textLabel!.numberOfLines = 0
         cell.textLabel!.lineBreakMode = NSLineBreakMode.byWordWrapping
         

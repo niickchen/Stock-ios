@@ -15,7 +15,7 @@ let AUTO_URL = "/autocomplete?input="
 
 extension NSMutableAttributedString {
     @discardableResult func bold(_ text: String) -> NSMutableAttributedString {
-        let attrs: [NSAttributedStringKey: Any] = [.font: UIFont.systemFont(ofSize: 15, weight: UIFont.Weight.bold)]
+        let attrs: [NSAttributedStringKey: Any] = [.font: UIFont.systemFont(ofSize: 15, weight: UIFont.Weight.semibold)]
         let boldString = NSMutableAttributedString(string:text, attributes: attrs)
         append(boldString)
         
@@ -70,25 +70,132 @@ extension NSMutableAttributedString {
 //    }
 //}
 
-class ViewController: UIViewController, UITextFieldDelegate, UITableViewDelegate, UITableViewDataSource {
+class ViewController: UIViewController, UITextFieldDelegate, UITableViewDelegate, UITableViewDataSource, UIPickerViewDataSource, UIPickerViewDelegate {
+    
+    
+    // autocompletion result list
     var autolist: [AnyObject] = []
+    // faved stocks
     var stocks: [StarredStock] = []
-    var stocksBak: [StarredStock] = []
-    var favTableUpdateimer: Timer!
+    var timer: Timer?
+    
+    
     @IBOutlet weak var inputField: UITextField!
     private let myArray: NSArray = ["First","Second","Third"]
     private var myTableView: UITableView!
+    
+    // the value to be sent via segue by clicking table cells
+    var tableCellSymbol = ""
+    
+    let sortbyPickerData = ["Default", "Symbol", "Price", "Change", "Change(%)"]
+    
+    let orderPickerData = ["Ascending", "Descending"]
+    
+    func numberOfComponents(in pickerView: UIPickerView) -> Int {
+        // hide picker row lines
+        pickerView.subviews.forEach({
+            $0.isHidden = $0.frame.height < 1.0
+        })
+        return 1
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        if pickerView == sortPicker {
+            return 5
+        } else {
+            return orderPickerData.count
+        }
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        if pickerView == sortPicker {
+            return sortbyPickerData[row]
+        } else {
+            return orderPickerData[row]
+        }
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        self.sortData()
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, viewForRow row: Int, forComponent component: Int, reusing view: UIView?) -> UIView {
+        var pickerLabel: UILabel? = (view as? UILabel)
+        if pickerLabel == nil {
+            pickerLabel = UILabel()
+            pickerLabel?.font = UIFont(name: "Arial", size: 20.0)
+            pickerLabel?.textAlignment = .center
+        }
+        if pickerView == sortPicker {
+            pickerLabel?.text = sortbyPickerData[row]
+        } else {
+            pickerLabel?.text = orderPickerData[row]
+        }
+        return pickerLabel!
+    }
+    
+    func sortData() {
+        
+    }
     
     // clear button clicked
     @IBAction func clear(_ sender: Any) {
         self.inputField.text = ""
         self.autolist = []
-        print()
+        // clear url tasks. called from autocompletion
+        URLSession.shared.getAllTasks{ (openTasks: [URLSessionTask]) in
+            print("Number of open tasks: \(openTasks.count)")
+            //openTasks.removeAll()
+            for task in openTasks {
+                task.cancel()
+            }
+        }
     }
     
+    @IBOutlet weak var orderPicker: UIPickerView!
+    @IBOutlet weak var sortPicker: UIPickerView!
+    
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
+    
+    func refreshData(delayTime: Double) {
+        
+        
+        // do nothing if auto refresh is on or no faved stocks
+        if self.switch.isOn || self.stocks.count == 0 {
+            return
+        }
+        
+        self.activityIndicator.isHidden = false
+        
+        for stock in stocks {
+            fetchData(symbol: stock.symbol!, url: TIME_SERIES_DAILY_URL)
+        }
+        
+        
+        // waiting for data
+        let when = DispatchTime.now() + delayTime // delay delayTime seconds
+        DispatchQueue.main.asyncAfter(deadline: when) {
+            self.favedStockTableView.reloadData()
+            self.activityIndicator.isHidden = true
+        }
+        
+    }
+    
+    @IBAction func refresh(_ sender: Any) {
+        refreshData(delayTime: 7)
+    }
     @IBOutlet weak var submitButton: UIButton!
     
-    @IBAction func switched(_ sender: Any) {
+    @IBAction func autorefresh(_ sender: Any) {
+        if self.switch.isOn {
+            timer = Timer.scheduledTimer(timeInterval: 4.0, target: self, selector: #selector(updateDataEveryFiveSeconds), userInfo: nil, repeats: true)
+        }
+            
+        else {
+            timer?.invalidate()
+            timer = nil
+        }
+        
         
     }
     
@@ -116,6 +223,26 @@ class ViewController: UIViewController, UITextFieldDelegate, UITableViewDelegate
                 var fullinputArr = inputField.text?.uppercased().replacingOccurrences(of: " ", with: "").split(separator: "-")
                 toViewController.input = String(fullinputArr![0])
             }
+        } else if segue.identifier == "cellToDetail" {
+            if let toViewController = segue.destination as? DetailViewController {
+                toViewController.input = tableCellSymbol
+            
+            }
+        }
+    }
+    
+    @objc func updateDataEveryFiveSeconds() {
+        
+        self.activityIndicator.isHidden = false
+        
+        let when = DispatchTime.now() + 1
+        DispatchQueue.main.asyncAfter(deadline: when) {
+            self.activityIndicator.isHidden = true
+            self.favedStockTableView.reloadData()
+        }
+        
+        for stock in stocks {
+            fetchData(symbol: stock.symbol!, url: TIME_SERIES_DAILY_URL)
         }
     }
     
@@ -142,6 +269,9 @@ class ViewController: UIViewController, UITextFieldDelegate, UITableViewDelegate
         
         // retrieve core data
         getData()
+        
+        // off switch
+        self.switch.setOn(false, animated: false)
         
         inputField.delegate = self
         inputField.layer.borderColor = UIColor(red: 87/255, green: 175/255, blue: 244/255, alpha: 255/255).cgColor
@@ -175,32 +305,32 @@ class ViewController: UIViewController, UITextFieldDelegate, UITableViewDelegate
         self.favedStockTableView.backgroundView = backgroundView
         favedStockTableView.reloadData()
         
-        // init timer
-        favTableUpdateimer = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(updateFavTable), userInfo: nil, repeats: true)
+        self.switch.onTintColor = UIColor(red: 87/255, green: 175/255, blue: 244/255, alpha: 255/255)
     }
     
-//    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-//        return CGFloat(40)
-//    }
-    
-    @objc func updateFavTable() {
-        // retrieve core data
-        getData()
-        if stocksBak != stocks {
-            stocksBak = stocks
-            favedStockTableView.reloadData()
-        }
-        
-    }
     
     override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
         
+//        URLSession.shared.getAllTasks{ (openTasks: [URLSessionTask]) in
+//            print("Number of open tasks: \(openTasks.count)")
+//            //openTasks.removeAll()
+//            for task in openTasks {
+//                task.cancel()
+//            }
+//        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         // hide top bar
         self.navigationController?.navigationBar.isHidden = true
+        
+        // update stock table
+        getData()
+        favedStockTableView.reloadData()
+        
+        refreshData(delayTime: 2)
     }
     
     
@@ -208,6 +338,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UITableViewDelegate
 //                                          sender sender: AnyObject!) -> Bool {
 //
 //    }
+    
     
     @IBOutlet weak var favedStockTableView: UITableView!
     
@@ -224,8 +355,35 @@ class ViewController: UIViewController, UITextFieldDelegate, UITableViewDelegate
             
         else if tableView == favedStockTableView {
             tableView.deselectRow(at: indexPath, animated: true)
+            tableCellSymbol = (favedStockTableView.cellForRow(at: indexPath)?.viewWithTag(100) as! UILabel).text ?? ""
+            performSegue(withIdentifier: "cellToDetail", sender: self.favedStockTableView.cellForRow(at: indexPath))
         }
         
+    }
+    
+    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool
+    {
+        return true
+    }
+    
+    // slide to delete
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+        let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+        if tableView == favedStockTableView && editingStyle == .delete {
+            
+            // delete from core data
+                let label = tableView.cellForRow(at: indexPath)?.viewWithTag(100) as! UILabel
+            let objs = get(withPredicate: NSPredicate(format: "symbol == %@", label.text!))
+                for obj in objs {
+                    context.delete(obj)
+                }
+            
+            
+            // update local data variable
+            getData()
+            
+            favedStockTableView.reloadData()
+        }
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -264,6 +422,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UITableViewDelegate
             }
             else {
                 let symbolLabel = UILabel(frame: CGRect(x: 20, y: 21, width: 50, height: 19))
+                symbolLabel.textColor = UIColor(red: 29/255, green: 41/255, blue: 81/255, alpha: 255/255)
                 symbolLabel.textAlignment = .center
                 symbolLabel.tag = 100
                 symbolLabel.text = stocks[indexPath.row].symbol
@@ -275,6 +434,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UITableViewDelegate
             }
             else {
                 let priceLabel = UILabel(frame: CGRect(x: 100, y: 21, width: 70, height: 19))
+                priceLabel.textColor = UIColor(red: 29/255, green: 41/255, blue: 81/255, alpha: 255/255)
                 priceLabel.textAlignment = .center
                 priceLabel.tag = 200
                 priceLabel.text = "$\(stocks[indexPath.row].price ?? "")"
@@ -291,6 +451,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UITableViewDelegate
                     changeLabel.attributedText = formattedString
                 } else {
                     changeLabel.text = "0.00 (0.00%)"
+                    changeLabel.textColor = UIColor(red: 29/255, green: 41/255, blue: 81/255, alpha: 255/255)
                 }
             }
             else {
@@ -306,6 +467,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UITableViewDelegate
                     changeLabel.attributedText = formattedString
                 } else {
                     changeLabel.text = "0.00 (0.00%)"
+                    changeLabel.textColor = UIColor(red: 29/255, green: 41/255, blue: 81/255, alpha: 255/255)
                 }
                 cell.contentView.addSubview(changeLabel)
             }
@@ -449,6 +611,156 @@ class ViewController: UIViewController, UITextFieldDelegate, UITableViewDelegate
         task.resume()
     }
     
+    func fetchData(symbol: String, url: String) {
+        // get URL string
+        let urlstring = (SERVER_URL + url + symbol)
+        let requestURL = URL(string: urlstring)
+        
+        // make http get request
+        var request = URLRequest(url: requestURL ?? URL(string: SERVER_URL + AUTO_URL)!)
+        request.httpMethod = "GET"
+        
+        let task = URLSession.shared.dataTask(with: requestURL ?? URL(string: SERVER_URL + AUTO_URL)!){
+            (data, response, error) in
+            // check for any errors
+            guard error == nil else {
+                print("Error calling GET")
+                print(error!)
+                self.displayToastMessage("Error updating one stock value.")
+                return
+            }
+            // make sure we got data
+            guard let responseData = data else {
+                print("Error: did not receive data")
+                self.displayToastMessage("Error updating one stock value.")
+                return
+            }
+            // parse the result as JSON
+            do {
+                guard let json = try JSONSerialization.jsonObject(with: responseData, options: [])
+                    as? [String: AnyObject] else {
+                        print("Error trying to convert data to JSON dictionary")
+                        self.displayToastMessage("Error updating one stock value.")
+                        return
+                }
+                
+                // if json contains error message
+                if json["Error Message"] != nil || json.count == 0 {
+                    self.displayToastMessage("Error updating one stock value.")
+                    return
+                }
+                
+                let data = self.processTableData(tsdData: json)
+                
+                // extract data if no error
+                let objs = self.get(withPredicate: NSPredicate(format: "symbol == %@", data["symbol"]!))
+                
+                print("\(data)")
+                // update core data
+                for obj in objs {
+                    self.updateData(obj: obj, data: data)
+                }
+                
+                // update local data
+                self.getData()
+                
+                
+            } catch  {
+                self.displayToastMessage("Error updating one stock value.")
+                print("Error trying to convert data to JSON")
+                return
+            }
+        }
+        
+        task.resume()
+    }
+    
+    // update core data
+    func updateData(obj: StarredStock, data: [String: String]) {
+        let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+        let stock = obj
+        // update core data
+        stock.price = data["price"]
+        stock.change = data["change"]
+        stock.volume = data["volume"]
+        // Save the data to coredata
+        (UIApplication.shared.delegate as! AppDelegate).saveContext()
+    }
+    
+    // return dates of stock prices in descending order
+    func getDates(_ dict: [String: AnyObject]) -> [String] {
+        var dates = Array(dict.keys)
+        dates = dates.sorted { (a, b) -> Bool in
+            if (Int(a[0..<4])! < Int(b[0..<4])!) {
+                return false;
+            }
+            else if (Int(a[0..<4])! > Int(b[0..<4])!) {
+                return true;
+            }
+            else {
+                if (Int(a[5..<7])! < Int(b[5..<7])!) {
+                    return false;
+                }
+                else if (Int(a[5..<7])! > Int(b[5..<7])!) {
+                    return true;
+                }
+                else {
+                    if (Int(a[8..<10])! < Int(b[8..<10])!) {
+                        return false;
+                    }
+                    else if (Int(a[8..<10])! > Int(b[8..<10])!) {
+                        return true;
+                    }
+                    else {
+                        return true;
+                    }
+                }
+            } }
+        return dates
+    }
+    
+    func processTableData(tsdData: [String: AnyObject]) -> [String: String] {
+        // process table data
+        var metadata = tsdData["Meta Data"] as? [String: String] ?? [:]
+        var tsd = tsdData["Time Series (Daily)"] as? [String: [String: String]] ?? [:]
+        if tsd.count > 0 {
+            //update row data
+            let dates = getDates(tsd as [String : AnyObject])
+            let lastDayData = tsd[dates[0]]!
+            let previousDayData = tsd[dates[1]]!
+            let lastPrice = Double(lastDayData["4. close"]!)
+            let lastClose = Double(previousDayData["4. close"]!)
+            let changeValue = lastPrice! - lastClose!
+            let changePercent = changeValue / lastClose! * 100
+            
+            let symbol = metadata["2. Symbol"]
+            let price = String(format: "%.2f", lastPrice!)
+            let change = String(format: "%.2f", changeValue) + " (" + String(format: "%.2f", changePercent) + "%)"
+            let volume = Int(lastDayData["5. volume"]!)?.formattedWithSeparator
+            let obj: [String : String] = ["symbol": symbol!, "price": price, "change": change, "volume": volume!]
+            
+            return obj
+        }
+        return [:]
+    }
+    
+    // fetch with predicate
+    func get(withPredicate queryPredicate: NSPredicate) -> [StarredStock]{
+        let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+        let fetchRequest: NSFetchRequest<StarredStock> = StarredStock.fetchRequest()
+        
+        fetchRequest.predicate = queryPredicate
+        
+        do {
+            let response = try context.fetch(fetchRequest)
+            return response as! [StarredStock]
+            
+        } catch let error as NSError {
+            // failure
+            print(error)
+            return [StarredStock]()
+        }
+    }
     
     
 }
