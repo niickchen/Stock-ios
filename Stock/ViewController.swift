@@ -267,9 +267,14 @@ class ViewController: UIViewController, UITextFieldDelegate, UITableViewDelegate
     
     func refreshData(delayTime: Double) {
         
+        // no faved stocks
+        if self.sortedStocks.count == 0 {
+            self.activityIndicator.isHidden = true
+            return
+        }
         
-        // do nothing if auto refresh is on or no faved stocks
-        if self.switch.isOn || self.sortedStocks.count == 0 {
+        // do nothing if auto refresh is on
+        if self.switch.isOn {
             return
         }
         
@@ -283,10 +288,9 @@ class ViewController: UIViewController, UITextFieldDelegate, UITableViewDelegate
         // waiting for data
         let when = DispatchTime.now() + delayTime // delay delayTime seconds
         DispatchQueue.main.asyncAfter(deadline: when) {
-            self.favedStockTableView.reloadData()
             self.activityIndicator.isHidden = true
+            self.favedStockTableView.reloadData()
         }
-        
     }
     
     @IBAction func refresh(_ sender: Any) {
@@ -447,6 +451,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UITableViewDelegate
         getData()
         favedStockTableView.reloadData()
         
+        // refresh table data in 2s
         refreshData(delayTime: 2)
     }
     
