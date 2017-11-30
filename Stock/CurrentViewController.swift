@@ -72,6 +72,7 @@ class CurrentViewController: UIViewController, WKUIDelegate, WKNavigationDelegat
     let urls = [TIME_SERIES_DAILY_URL, SMA_URL, EMA_URL, STOCH_URL, RSI_URL, ADX_URL, CCI_URL, BBANDS_URL, MACD_URL]
     
     
+    @IBOutlet weak var fbButton: UIButton!
     @IBOutlet weak var webView: WKWebView!
     @IBOutlet weak var tableView: UITableView!
     
@@ -93,6 +94,10 @@ class CurrentViewController: UIViewController, WKUIDelegate, WKNavigationDelegat
         getData()
 
         loaded = false
+        
+        // deactivate fb share button
+        fbButton.isEnabled = false
+        fbButton.isUserInteractionEnabled = false
         
         // init fav button value
         unFav()
@@ -204,18 +209,7 @@ class CurrentViewController: UIViewController, WKUIDelegate, WKNavigationDelegat
     }
     
     @IBAction func shareToFacebook(_ sender: Any) {
-        if currentValidPickerValue == 0 {
-            if loaded && !self.tsdError {
-                // timer to check if received link
-                fbTimer = Timer.scheduledTimer(timeInterval: 0.3, target: self, selector: #selector(self.receivedLinkAndPostToFaceBook), userInfo: nil, repeats: true)
-            }
-        } else{
-            if loaded && !self.error[self.urls[currentValidPickerValue]]! {
-                // timer to check if received link
-                fbTimer = Timer.scheduledTimer(timeInterval: 0.3, target: self, selector: #selector(self.receivedLinkAndPostToFaceBook), userInfo: nil, repeats: true)
-            }
-        }
-        
+        invokeFacebookShareDialog(link: chartLink)
     }
     
     func invokeFacebookShareDialog(link: String) {
@@ -242,7 +236,8 @@ class CurrentViewController: UIViewController, WKUIDelegate, WKNavigationDelegat
             
             fbTimer?.invalidate()
             fbTimer = nil
-            invokeFacebookShareDialog(link: chartLink)
+            fbButton.isEnabled = true
+            fbButton.isUserInteractionEnabled = true
         }
     }
     
@@ -256,6 +251,8 @@ class CurrentViewController: UIViewController, WKUIDelegate, WKNavigationDelegat
             // Then Dictionary to Data. IDK why it has to be like this, or it will fail to be correct Data.
             let data = try? JSONSerialization.data(withJSONObject: json, options: .prettyPrinted)
             httpPost(jsondata: data!, url: url!)
+            
+            
         }
     }
     
@@ -341,6 +338,9 @@ class CurrentViewController: UIViewController, WKUIDelegate, WKNavigationDelegat
                     // http post to get chart link
                     self.retrieveChartPicture()
                 }
+                
+                // start link check timer
+                fbTimer = Timer.scheduledTimer(timeInterval: 0.3, target: self, selector: #selector(self.receivedLinkAndPostToFaceBook), userInfo: nil, repeats: true)
             } else {
                 webView.isHidden = true
                 loaded = true
@@ -365,7 +365,12 @@ class CurrentViewController: UIViewController, WKUIDelegate, WKNavigationDelegat
                 DispatchQueue.main.asyncAfter(deadline: when) {
                     // http post to get chart link
                     self.retrieveChartPicture()
+                    
                 }
+                
+                // start link check timer
+                fbTimer = Timer.scheduledTimer(timeInterval: 0.3, target: self, selector: #selector(self.receivedLinkAndPostToFaceBook), userInfo: nil, repeats: true)
+                
             } else if self.error[SMA_URL] != nil && self.error[SMA_URL]! {
                 webView.isHidden = true
                 loaded = true
@@ -390,6 +395,10 @@ class CurrentViewController: UIViewController, WKUIDelegate, WKNavigationDelegat
                     // http post to get chart link
                     self.retrieveChartPicture()
                 }
+                
+                // start link check timer
+                fbTimer = Timer.scheduledTimer(timeInterval: 0.3, target: self, selector: #selector(self.receivedLinkAndPostToFaceBook), userInfo: nil, repeats: true)
+                
             } else if self.error[EMA_URL] != nil && self.error[EMA_URL]! {
                 webView.isHidden = true
                 loaded = true
@@ -412,6 +421,10 @@ class CurrentViewController: UIViewController, WKUIDelegate, WKNavigationDelegat
                     // http post to get chart link
                     self.retrieveChartPicture()
                 }
+                
+                // start link check timer
+                fbTimer = Timer.scheduledTimer(timeInterval: 0.3, target: self, selector: #selector(self.receivedLinkAndPostToFaceBook), userInfo: nil, repeats: true)
+                
             } else if self.error[STOCH_URL] != nil && self.error[STOCH_URL]! {
                 webView.isHidden = true
                 loaded = true
@@ -434,6 +447,10 @@ class CurrentViewController: UIViewController, WKUIDelegate, WKNavigationDelegat
                     // http post to get chart link
                     self.retrieveChartPicture()
                 }
+                
+                // start link check timer
+                fbTimer = Timer.scheduledTimer(timeInterval: 0.3, target: self, selector: #selector(self.receivedLinkAndPostToFaceBook), userInfo: nil, repeats: true)
+                
             } else if self.error[RSI_URL] != nil && self.error[RSI_URL]! {
                 webView.isHidden = true
                 loaded = true
@@ -457,6 +474,10 @@ class CurrentViewController: UIViewController, WKUIDelegate, WKNavigationDelegat
                     // http post to get chart link
                     self.retrieveChartPicture()
                 }
+                
+                // start link check timer
+                fbTimer = Timer.scheduledTimer(timeInterval: 0.3, target: self, selector: #selector(self.receivedLinkAndPostToFaceBook), userInfo: nil, repeats: true)
+                
             } else if self.error[ADX_URL] != nil && self.error[ADX_URL]! {
                 webView.isHidden = true
                 loaded = true
@@ -479,6 +500,10 @@ class CurrentViewController: UIViewController, WKUIDelegate, WKNavigationDelegat
                     // http post to get chart link
                     self.retrieveChartPicture()
                 }
+                
+                // start link check timer
+                fbTimer = Timer.scheduledTimer(timeInterval: 0.3, target: self, selector: #selector(self.receivedLinkAndPostToFaceBook), userInfo: nil, repeats: true)
+                
             } else if self.error[CCI_URL] != nil && self.error[CCI_URL]! {
                 webView.isHidden = true
                 loaded = true
@@ -502,6 +527,10 @@ class CurrentViewController: UIViewController, WKUIDelegate, WKNavigationDelegat
                     // http post to get chart link
                     self.retrieveChartPicture()
                 }
+                
+                // start link check timer
+                fbTimer = Timer.scheduledTimer(timeInterval: 0.3, target: self, selector: #selector(self.receivedLinkAndPostToFaceBook), userInfo: nil, repeats: true)
+                
             } else if self.error[BBANDS_URL] != nil && self.error[BBANDS_URL]! {
                 webView.isHidden = true
                 loaded = true
@@ -525,6 +554,10 @@ class CurrentViewController: UIViewController, WKUIDelegate, WKNavigationDelegat
                     // http post to get chart link
                     self.retrieveChartPicture()
                 }
+                
+                // start link check timer
+                fbTimer = Timer.scheduledTimer(timeInterval: 0.3, target: self, selector: #selector(self.receivedLinkAndPostToFaceBook), userInfo: nil, repeats: true)
+                
             } else if self.error[MACD_URL] != nil && self.error[MACD_URL]! {
                 webView.isHidden = true
                 loaded = true
@@ -640,6 +673,8 @@ class CurrentViewController: UIViewController, WKUIDelegate, WKNavigationDelegat
     
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
         selectedPickerValue = row
+        fbButton.isUserInteractionEnabled = false
+        fbButton.isEnabled = false
     }
     
     func pickerView(_ pickerView: UIPickerView, viewForRow row: Int, forComponent component: Int, reusing view: UIView?) -> UIView {
